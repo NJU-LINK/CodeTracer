@@ -1,6 +1,6 @@
 <div align="center">
-
 <a href="https://mini-swe-agent.com/latest/"><img src="https://github.com/SWE-agent/mini-swe-agent/raw/main/docs/assets/mini-swe-agent-banner.svg" alt="mini-swe-agent banner" style="height: 7em"/></a>
+</div>
 
 <h1>The 100 line AI agent that solves GitHub issues & more</h1>
 
@@ -8,27 +8,25 @@
 [![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://join.slack.com/t/swe-bench/shared_invite/zt-36pj9bu5s-o3_yXPZbaH2wVnxnss1EkQ)
 [![PyPI - Version](https://img.shields.io/pypi/v/mini-swe-agent?style=for-the-badge&logo=python&logoColor=white&labelColor=black&color=deeppink)](https://pypi.org/project/mini-swe-agent/)
 
-</div>
-
 In 2024, [SWE-bench](https://github.com/swe-bench/SWE-bench) & [SWE-agent](https://github.com/swe-agent/swe-agent) helped kickstart the agentic AI for software revolution.
 
 We now ask: **What if SWE-agent was 100x smaller, and still worked nearly as well?**
 
 `mini` is for
 
-- 🧪 **Researchers** who want to **benchmark, fine-tune or RL** without assumptions, bloat, or surprises
-- 🧑‍💻 **Hackers & power users** who like their tools like their scripts: **short, sharp, and readable**
-- 🐳 **Engineers** who want something **trivial to sandbox & to deploy anywhere**
+- **Researchers** who want to **benchmark, fine-tune or RL** without assumptions, bloat, or surprises
+   **Hackers & power users** who like their tools like their scripts: **short, sharp, and readable**
+- **Engineers** who want something **trivial to sandbox & to deploy anywhere**
 
 Here's some details:
 
-- **🐜 Minimal**: Just [100 lines of python](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/agents/default.py) (+100 total for [env](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/local.py),
+- **Minimal**: Just [100 lines of python](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/agents/default.py) (+100 total for [env](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/environments/local.py),
 [model](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/models/litellm_model.py), [script](https://github.com/SWE-agent/mini-swe-agent/blob/main/src/minisweagent/run/hello_world.py)) — no fancy dependencies!
-- **💪 Powerful:** Resolves 65% of GitHub issues in the [SWE-bench verified benchmark](https://www.swebench.com/) (with Claude Sonnet 4).
-- **🤗 Friendly:** Comes with **two convenient UIs** that will turn this into your daily dev swiss army knife!
-- **🍀 Environments:** In addition to local envs, you can use **docker**, **podman**, **singularity**, **apptainer**, and more
-- **🧪 Tested:** [![Codecov](https://img.shields.io/codecov/c/github/swe-agent/mini-swe-agent?style=flat-square)](https://codecov.io/gh/SWE-agent/mini-swe-agent)
-- **🎓 Cutting edge:** Built by the Princeton & Stanford team behind [SWE-bench](https://swebench.com) and [SWE-agent](https://swe-agent.com).
+- **Powerful:** Resolves 65% of GitHub issues in the [SWE-bench verified benchmark](https://www.swebench.com/) (with Claude Sonnet 4).
+- **Friendly:** Comes with **two convenient UIs** that will turn this into your daily dev swiss army knife!
+- **Environments:** In addition to local envs, you can use **docker**, **podman**, **singularity**, **apptainer**, and more
+- **Tested:** [![Codecov](https://img.shields.io/codecov/c/github/swe-agent/mini-swe-agent?style=flat-square)](https://codecov.io/gh/SWE-agent/mini-swe-agent)
+- **Cutting edge:** Built by the Princeton & Stanford team behind [SWE-bench](https://swebench.com) and [SWE-agent](https://swe-agent.com).
 
 <details>
 
@@ -172,7 +170,7 @@ agent.run("Write a sudoku game")
 </tr>
 </table>
 
-## 🔥 Let's get started!
+## Let's get started!
 
 Install + run in virtual environment
 
@@ -204,7 +202,7 @@ Read more in our [documentation](https://mini-swe-agent.com/latest/):
 * [FAQ](https://mini-swe-agent.com/latest/faq/)
 * [Contribute!](https://mini-swe-agent.com/latest/contributing/)
 
-## 👀 More agentic AI
+## More agentic AI
 
 <div align="center">
   <a href="https://github.com/SWE-agent/SWE-agent"><img src="https://github.com/SWE-agent/mini-swe-agent/raw/main/docs/assets/sweagent_logo_text_below.svg" alt="SWE-agent" height="120px"></a>
