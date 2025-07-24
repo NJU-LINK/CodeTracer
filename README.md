@@ -15,7 +15,7 @@ We now ask: **What if SWE-agent was 100x smaller, and still worked nearly as wel
 `mini` is for
 
 - **Researchers** who want to **benchmark, fine-tune or RL** without assumptions, bloat, or surprises
-- **Hackers & power users** who like their tools like their scripts: **short, sharp, and readable**
+- **Devs** who like their tools like their scripts: **short, sharp, and readable**
 - **Engineers** who want something **trivial to sandbox & to deploy anywhere**
 
 Here's some details:
