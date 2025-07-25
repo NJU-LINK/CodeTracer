@@ -174,7 +174,7 @@ agent.run("Write a sudoku game")
 
 ## Let's get started!
 
-Install + run in virtual environment
+Option 1: Install + run in virtual environment
 
 ```bash
 pip install uv && uvx mini-swe-agent [-v]
@@ -182,13 +182,13 @@ pip install uv && uvx mini-swe-agent [-v]
 pip install pipx && pipx ensurepath && pipx run mini-swe-agent [-v]
 ```
 
-Alternative: Install in current environment
+Option 2: Install in current environment
 
 ```bash
 pip install mini-swe-agent && mini [-v]
 ```
 
-Alternative: Install from source
+Option 3: Install from source
 
 ```bash
 git clone https://github.com/SWE-agent/mini-swe-agent.git
