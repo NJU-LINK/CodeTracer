@@ -203,3 +203,28 @@ def test_docker_environment_command_failure(executable):
         assert result["returncode"] == 42
     finally:
         env.cleanup()
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("executable", environment_params)
+def test_docker_environment_custom_container_timeout(executable):
+    """Test that custom container_timeout is respected."""
+    import time
+    
+    env = DockerEnvironment(image="python:3.11", executable=executable, container_timeout="3s")
+    
+    try:
+        result = env.execute("echo 'container is running'")
+        assert result["returncode"] == 0
+        assert "container is running" in result["output"]
+        time.sleep(5)
+        with pytest.raises((subprocess.CalledProcessError, subprocess.TimeoutExpired)):
+            # This command should fail because the container has stopped
+            subprocess.run(
+                [executable, "exec", env.container_id, "echo", "still running"],
+                check=True,
+                capture_output=True,
+                timeout=2
+            )
+    finally:
+        env.cleanup()
