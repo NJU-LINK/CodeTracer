@@ -210,9 +210,9 @@ def test_docker_environment_command_failure(executable):
 def test_docker_environment_custom_container_timeout(executable):
     """Test that custom container_timeout is respected."""
     import time
-    
+
     env = DockerEnvironment(image="python:3.11", executable=executable, container_timeout="3s")
-    
+
     try:
         result = env.execute("echo 'container is running'")
         assert result["returncode"] == 0
@@ -224,7 +224,7 @@ def test_docker_environment_custom_container_timeout(executable):
                 [executable, "exec", env.container_id, "echo", "still running"],
                 check=True,
                 capture_output=True,
-                timeout=2
+                timeout=2,
             )
     finally:
         env.cleanup()
