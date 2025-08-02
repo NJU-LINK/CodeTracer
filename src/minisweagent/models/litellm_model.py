@@ -31,7 +31,9 @@ class LitellmModel:
         self.cost = 0.0
         self.n_calls = 0
         if self.config.litellm_model_registry is not None:
-            litellm.utils.register_model(json.loads(self.config.litellm_model_registry.read_text()))
+            litellm.utils.register_model(
+                json.loads(Path(self.config.litellm_model_registry).read_text())
+            )
 
     @retry(
         stop=stop_after_attempt(10),
