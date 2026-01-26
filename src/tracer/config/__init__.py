@@ -1,4 +1,4 @@
-"""Configuration files and utilities for mini-SWE-agent."""
+"""Configuration files and utilities for tracer."""
 
 import os
 from pathlib import Path
@@ -13,9 +13,8 @@ def get_config_path(config_spec: str | Path) -> Path:
         config_spec = config_spec.with_suffix(".yaml")
     candidates = [
         Path(config_spec),
-        Path(os.getenv("TRACER_CONFIG_DIR") or os.getenv("MSWEA_CONFIG_DIR") or ".") / config_spec,
+        Path(os.getenv("TRACER_CONFIG_DIR") or ".") / config_spec,
         builtin_config_dir / config_spec,
-        builtin_config_dir / "extra" / config_spec,
     ]
     for candidate in candidates:
         if candidate.exists():

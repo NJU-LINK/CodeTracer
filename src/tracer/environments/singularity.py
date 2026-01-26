@@ -21,7 +21,7 @@ class SingularityEnvironmentConfig(BaseModel):
     """Environment variables to forward to the container."""
     timeout: int = 30
     """Timeout for executing commands in the container."""
-    executable: str = os.getenv("MSWEA_SINGULARITY_EXECUTABLE", "singularity")
+    executable: str = os.getenv("TRACER_SINGULARITY_EXECUTABLE", "singularity")
     """Path to the singularity executable."""
     sandbox_build_retries: int = 3
     """Number of retries for building the sandbox if an error occurs."""

@@ -12,7 +12,7 @@ from tenacity import (
     wait_exponential,
 )
 
-from tracer.models import GLOBAL_MODEL_STATS
+from tracer.models.stats import GLOBAL_MODEL_STATS
 
 logger = logging.getLogger("custom_api_model")
 
@@ -64,7 +64,7 @@ class CustomAPIModel:
 
     @retry(
         reraise=True,
-        stop=stop_after_attempt(int(os.getenv("MSWEA_MODEL_RETRY_STOP_AFTER_ATTEMPT", "10"))),
+        stop=stop_after_attempt(int(os.getenv("TRACER_MODEL_RETRY_STOP_AFTER_ATTEMPT", "10"))),
         wait=wait_exponential(multiplier=1, min=4, max=60),
         before_sleep=before_sleep_log(logger, logging.WARNING),
         retry=retry_if_not_exception_type(

@@ -258,7 +258,7 @@ class TextualAgent(App):
     ]
 
     def __init__(self, model, env, **kwargs):
-        css_path = os.environ.get("MSWEA_MINI_STYLE_PATH", str(Path(__file__).parent.parent / "config" / "mini.tcss"))
+        css_path = os.environ.get("TRACER_STYLE_PATH", str(Path(__file__).parent.parent / "config" / "mini.tcss"))
         self.__class__.CSS = Path(css_path).read_text()
         super().__init__()
         self.agent_state = "UNINITIALIZED"
@@ -368,7 +368,7 @@ class TextualAgent(App):
                 content_str = str(message["content"])
             message_container = Vertical(classes="message-container")
             container.mount(message_container)
-            role = message["role"].replace("assistant", "mini-swe-agent")
+            role = message["role"].replace("assistant", "tracer")
             message_container.mount(Static(role.upper(), classes="message-header"))
             message_container.mount(Static(Text(content_str, no_wrap=False), classes="message-content"))
 
