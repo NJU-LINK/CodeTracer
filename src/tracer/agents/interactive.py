@@ -42,7 +42,7 @@ class InteractiveAgent(DefaultAgent):
         super().add_message(role, content, **kwargs)
         if role == "assistant":
             console.print(
-                f"\n[red][bold]mini-swe-agent[/bold] (step [bold]{self.model.n_calls}[/bold], [bold]${self.model.cost:.2f}[/bold]):[/red]\n",
+                f"\n[red][bold]tracer[/bold] (step [bold]{self.model.n_calls}[/bold], [bold]${self.model.cost:.2f}[/bold]):[/red]\n",
                 end="",
                 highlight=False,
             )

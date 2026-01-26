@@ -30,7 +30,7 @@ class BubblewrapEnvironmentConfig(BaseModel):
     """Dictionary of environment variables to set in the sandbox."""
     timeout: int = 30
     """Timeout for the command in seconds."""
-    executable: str = os.getenv("MSWEA_BUBBLEWRAP_EXECUTABLE", "bwrap")
+    executable: str = os.getenv("TRACER_BUBBLEWRAP_EXECUTABLE", "bwrap")
     """Path to the bubblewrap executable."""
     wrapper_args: list[str] = [
         "--unshare-user-try",

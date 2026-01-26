@@ -9,13 +9,14 @@ CodeTracer is a minimal **tracer** framework built on a bash-only agent loop.
 ## Install
 
 ```bash
-cd /data/terminalbench/mini-tracer
+git clone <your-repo-url>
+cd mini-tracer
 pip install -e .
 ```
 
 ## Configure model (OpenAI-compatible)
 
-Edit `src/tracer/config/extra/tracer.yaml`:
+Edit `src/tracer/config/tracer.yaml`:
 
 - `model.api_base`: OpenAI-compatible base URL (must include scheme, e.g. `https://.../v1`)
 - `model.api_key`: API key

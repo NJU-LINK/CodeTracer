@@ -21,7 +21,7 @@ class DockerEnvironmentConfig(BaseModel):
     """
     timeout: int = 30
     """Timeout for executing commands in the container."""
-    executable: str = os.getenv("MSWEA_DOCKER_EXECUTABLE", "docker")
+    executable: str = os.getenv("TRACER_DOCKER_EXECUTABLE", "docker")
     """Path to the docker/container executable."""
     run_args: list[str] = ["--rm"]
     """Additional arguments to pass to the docker/container executable.
