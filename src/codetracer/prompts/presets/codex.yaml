@@ -1,0 +1,27 @@
+# Skill template for OpenAI Codex CLI agent
+name: codex
+agent: codex
+description: Template for injecting CodeTracer analysis into Codex sessions
+metadata:
+  version: "0.1"
+  author: codetracer
+
+# TODO: tailor these templates to Codex's conversation format
+error_format: |
+  [CodeTracer Error Analysis]
+  {% for label in analysis.labels %}
+  Step {{ label.step_id }} [{{ label.verdict }}]: {{ label.reasoning }}
+  {% endfor %}
+  {% if analysis.summary %}
+  Overall: {{ analysis.summary }}
+  {% endif %}
+
+replay_instructions: |
+  Resuming from step {{ target_step_id }}.
+  Environment state has been restored. Avoid the errors identified above.
+
+context_injection: |
+  --- CodeTracer Context ---
+  {{ error_block }}
+  {{ replay_block }}
+  --------------------------

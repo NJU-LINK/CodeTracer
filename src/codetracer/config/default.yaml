@@ -1,0 +1,303 @@
+llm:
+  api_base: ""
+  api_key: ""
+  model_name: null
+  model_kwargs: {}
+
+trace:
+  cost_limit: 3.0
+  step_limit: 0
+  timeout: 60
+  action_regex: "```bash\\s*\\n([\\s\\S]*?)\\n?```"
+
+  system_template: |
+    You are CodeTracer, a trajectory diagnosis agent. You analyze agent run directories to identify failure-relevant steps.
+
+    Your response must contain exactly ONE bash code block with ONE command:
+
+    ```bash
+    <single command>
+    ```
+
+    Include a THOUGHT section before the command explaining your reasoning.
+
+    Rules:
+    - One command per response
+    - No && or || chaining
+    - No heredocs
+    - The closing ``` must be on its own line
+
+  instance_template: |
+    Analyze this agent trajectory and label failure-relevant steps.
+
+    {% if exploration_instructions %}
+    ============================================================
+    PHASE 1 — MANDATORY TASK EXPLORATION (do this FIRST)
+    ============================================================
+
+    Task: {{ task_name }}
+    Task directory: {{ task_dir }}
+
+    Before analyzing ANY trajectory steps, you MUST explore the task
+    context by executing the following commands (one per response).
+    Do NOT skip this phase.
+
+    {{ exploration_instructions }}
+
+    {% if problem_statement %}
+    Problem Statement:
+    {{ problem_statement }}
+    {% endif %}
+
+    After you have completed all exploration commands and understand
+    the task, proceed to Phase 2.
+
+    ============================================================
+    PHASE 2 — TRAJECTORY ANALYSIS
+    ============================================================
+    {% else %}
+    <task>
+    {{ task_description }}
+    </task>
+    {% endif %}
+
+    Tree index (navigation aid):
+    <tree>
+    {{ tree_md }}
+    </tree>
+
+    Stage ranges:
+    <stages>
+    {{ stage_ranges_json }}
+    </stages>
+
+    Format context ({{ skill_name }}):
+    <format_doc>
+    {{ skill_doc }}
+    </format_doc>
+
+    Your working directory: {{ work_dir }}
+
+    Available files:
+    - steps.json: full trajectory (large, query by step_id)
+    - task.md: task specification
+    - tree.md: tree index
+    - stage_ranges.json: stage spans
+
+    Step inspection one-liner:
+    ```bash
+    python -c 'import json; sid=N; s=next(x for x in json.load(open("steps.json")) if x.get("step_id")==sid); print(json.dumps(s,indent=2,ensure_ascii=False))'
+    ```
+
+    Labels:
+    - incorrect: wrong state-changing action (mislocalized edit, bad hypothesis, regression)
+    - unuseful: redundant exploration (repeated reads/searches without new evidence)
+
+    Workflow:
+    {% if task_dir %}
+    1. EXPLORE the task context (Phase 1 above — mandatory)
+    2. Initialize output file: python -c 'import json; open("codetracer_labels.json","w").write("[]")'
+    {% else %}
+    1. Initialize output file: python -c 'import json; open("codetracer_labels.json","w").write("[]")'
+    {% endif %}
+    3. Use tree.md to spot suspicious areas
+    4. INSPECT suspicious step_ids (one per response)
+    5. WRITE labels after inspecting evidence
+    6. FINALIZE with: echo TRACER_FINAL_OUTPUT
+
+    Anti-cheat rules:
+    - Every labeled step_id MUST have been explicitly inspected in this run
+    - Inspect at least 3 distinct steps spread across the trajectory before finalizing
+    - Do NOT auto-label without evidence
+
+    Output file (codetracer_labels.json):
+    ```json
+    [{"stage_id": N, "incorrect_step_ids": [], "unuseful_step_ids": [], "reasoning": "..."}]
+    ```
+    Each entry corresponds to one stage (stage_id is an integer matching the
+    stage numbers in stage_ranges.json). Create one entry per stage that
+    contains incorrect or unuseful steps.
+
+    Initialize:
+    ```bash
+    python -c 'import json; open("codetracer_labels.json","w").write("[]")'
+    ```
+
+    Finalize last:
+    ```bash
+    echo TRACER_FINAL_OUTPUT
+    ```
+
+  observation_template: |
+    <returncode>{{ output.returncode }}</returncode>
+    {% if output.output | length < 10000 -%}
+    <output>
+    {{ output.output -}}
+    </output>
+    {%- else -%}
+    <warning>Output too long.</warning>
+    <output_head>
+    {{ output.output[:5000] }}
+    </output_head>
+    <elided>{{ output.output | length - 10000 }} chars elided</elided>
+    <output_tail>
+    {{ output.output[-5000:] }}
+    </output_tail>
+    {%- endif -%}
+
+  format_error_template: "Please provide EXACTLY ONE bash code block. Found {{ actions | length }} blocks."
+
+  timeout_template: |
+    Command timed out: {{ action['action'] }}
+    {% if output | length < 10000 %}Output: {{ output }}{% else %}Output (truncated): {{ output[:3000] }}{% endif %}
+
+discovery:
+  max_attempts: 3
+
+  system_template: |
+    You are a code agent specializing in parsing agent trajectory files.
+    You will be given the file layout of an unknown run directory and must produce TWO outputs:
+
+    1. A SKILL.md file (in a ```markdown block) with YAML frontmatter containing name,
+       description, fingerprints, and metadata fields, followed by documentation of
+       the directory layout and extraction logic.
+    2. A parser.py file (in a ```python block) implementing the parser.
+
+    The parser must follow this interface:
+
+    ```python
+    from pathlib import Path
+    from codetracer.core.models import FileRef, NormalizedTrajectory, StepRecord
+
+    class GeneratedParser:
+        format_id = "<unique_format_id>"
+
+        def can_parse(self, run_dir: Path) -> bool: ...
+        def parse(self, run_dir: Path) -> NormalizedTrajectory:
+            ...
+            return NormalizedTrajectory(
+                steps=steps,
+                task_description=instruction,
+                metadata={"format": self.format_id, "run_dir": str(run_dir)},
+            )
+
+    parser = GeneratedParser()
+    ```
+
+    Rules:
+    - format_id must be a short lowercase slug
+    - Each StepRecord must have step_id (1-indexed int), action (str), observation (str|None)
+    - The file must end with `parser = GeneratedParser()`
+    - parse() must extract task_description from the run data (e.g. results.json
+      "instruction" field) and pass it to NormalizedTrajectory
+
+  instance_template: |
+    Run directory: {run_dir}
+
+    Directory listing (first 200 files):
+    {listing}
+
+    Sample file contents:
+    {samples}
+
+    Existing skills for reference:
+    {skill_index}
+
+    Write a SKILL.md and parser.py for this trajectory format.
+
+  validation_error_template: |
+    Your parser raised an error during validation:
+
+    {error}
+
+    Fix the parser and return corrected ```markdown and ```python blocks.
+
+tree:
+  system_template: "You are a trajectory analysis assistant. Respond only with the requested JSON."
+  instance_template: |
+    Classify each step as 'change' (modifies state: writes files, installs packages,
+    edits code) or 'explore' (reads, searches, tests without state change).
+    Also give a short 3-6 word label per step.
+
+    Steps:
+    {{ steps_json }}
+
+    Return JSON array: [{"step_id": N, "node_type": "change"|"explore", "label": "..."}]
+
+environment:
+  env:
+    PAGER: cat
+    MANPAGER: cat
+
+replay:
+  max_replay_steps: 30
+  timeout: 120
+
+  system_template: |
+    You are CodeTracer Replay Agent. You are resuming a failed agent run at a
+    specific breakpoint where errors were detected. Your job is to continue
+    the task using a corrected strategy informed by the error analysis provided.
+
+    Respond with exactly ONE bash code block per message:
+    ```bash
+    <single command>
+    ```
+
+  breakpoint_template: |
+    You are resuming an agent trajectory that was previously analyzed for errors.
+
+    == Trajectory Context ==
+    Task: {{ task_description }}
+
+    Steps executed so far (1 to {{ preceding_count }}):
+    {% for s in preceding_steps -%}
+    [Step {{ s.step_id }}] {{ s.action[:120] }}
+    {% endfor %}
+
+    == Error Analysis at Step {{ target_step_id }} ==
+    {{ analysis_summary }}
+
+    {% for label in error_labels -%}
+    - Step {{ label.step_id }} ({{ label.verdict }}): {{ label.reasoning }}
+    {% endfor %}
+
+    == Instructions ==
+    The trajectory went wrong at step {{ target_step_id }}.
+    You are now at that exact point. The environment has been restored to
+    the state right before step {{ target_step_id }} was executed.
+
+    Review the error analysis above and continue from here with a corrected approach.
+    Do NOT repeat the commands from steps 1-{{ preceding_count }}.
+
+    When finished, run:
+    ```bash
+    echo TRACER_FINAL_OUTPUT
+    ```
+
+bench:
+  user_bench_dir: null
+  auto_generate: true
+  generator_max_attempts: 3
+
+classification:
+  store_path: null
+
+output:
+  default_profile: tracebench
+  profiles:
+    tracebench:
+      schema_ref: tracebench_labels
+      finalize_instruction: "Output codetracer_labels.json with stage-level labels as a JSON array."
+      output_file: codetracer_labels.json
+    detailed:
+      schema_ref: deep_analysis
+      finalize_instruction: "Output a comprehensive root cause analysis as codetracer_analysis.json."
+      output_file: codetracer_analysis.json
+
+memory:
+  enabled: true
+  memory_dir: null
+
+plugin:
+  adapters: {}
+  hooks_enabled: true

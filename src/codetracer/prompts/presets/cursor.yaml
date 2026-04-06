@@ -1,0 +1,27 @@
+# Skill template for Cursor IDE agent
+name: cursor
+agent: cursor
+description: Template for injecting CodeTracer analysis into Cursor agent sessions
+metadata:
+  version: "0.1"
+  author: codetracer
+
+# TODO: tailor these templates to Cursor's agent conversation format
+error_format: |
+  ## CodeTracer Error Analysis
+  {% for label in analysis.labels %}
+  - **Step {{ label.step_id }}** ({{ label.verdict }}): {{ label.reasoning }}
+  {% endfor %}
+  {% if analysis.summary %}
+  **Summary:** {{ analysis.summary }}
+  {% endif %}
+
+replay_instructions: |
+  Replay target: step {{ target_step_id }}.
+  The workspace has been restored to the state before this step.
+  Refer to the error analysis and take a corrected approach.
+
+context_injection: |
+  {{ error_block }}
+
+  {{ replay_block }}
