@@ -9,7 +9,6 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-
 INJECTED_DIR_RE = re.compile(
     r"(?:^|/|-)injected|negonly|gtonly|mixed-gt2|gt-?\d+pct|partial-steps|partial-injected",
     re.IGNORECASE,

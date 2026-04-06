@@ -13,10 +13,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from codetracer.utils.template import render_template
-
 from codetracer.models import NormalizedTrajectory, StepRecord, TraceTree, TreeNode
 from codetracer.services.classification import ClassificationStore
+from codetracer.utils.template import render_template
 
 logger = logging.getLogger(__name__)
 

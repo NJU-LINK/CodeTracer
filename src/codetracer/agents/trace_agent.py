@@ -8,16 +8,16 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from codetracer.agents.base import AgentEvent, BaseAgent
+from codetracer.agents.base import BaseAgent
 from codetracer.agents.compact import CompactManager
 from codetracer.agents.context import ContextAssembler
 from codetracer.agents.executor import Executor
-from codetracer.models.task import TaskContext
-from codetracer.services.cost_tracker import CostTracker
-from codetracer.state.output_profile import OutputProfile
 from codetracer.llm.client import LLMClient
+from codetracer.models.task import TaskContext
 from codetracer.plugins.hooks import HookManager
+from codetracer.services.cost_tracker import CostTracker
 from codetracer.skills.loader import Skill
+from codetracer.state.output_profile import OutputProfile
 
 
 class TraceAgent:

@@ -6,16 +6,15 @@ import re
 from pathlib import Path
 from typing import Any
 
+from codetracer.llm.client import LLMClient
+from codetracer.skills.loader import Skill, load_skill
+from codetracer.skills.pool import SkillPool
 from codetracer.utils.llm_generator import (
     extract_code_block,
     list_dir,
     sample_files,
     validate_in_subprocess,
 )
-from codetracer.models import NormalizedTrajectory
-from codetracer.llm.client import LLMClient
-from codetracer.skills.loader import Skill, load_skill
-from codetracer.skills.pool import SkillPool
 
 
 class SkillGenerator:

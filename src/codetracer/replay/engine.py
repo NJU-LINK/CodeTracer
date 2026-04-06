@@ -21,7 +21,6 @@ from codetracer.models import (
     NormalizedTrajectory,
     ReplayResult,
     ReplayStatus,
-    StepCheckpoint,
 )
 from codetracer.plugins.hooks import (
     REPLAY_COMPLETE,
@@ -31,10 +30,10 @@ from codetracer.plugins.hooks import (
     HookManager,
     default_hooks,
 )
-from codetracer.services.file_state import FileStateTracker
 from codetracer.replay.checkpoint import CheckpointManager
 from codetracer.replay.context_inject import ContextInjector
 from codetracer.replay.runner import BaseRunner, ReplayRunner
+from codetracer.services.file_state import FileStateTracker
 
 logger = logging.getLogger(__name__)
 console = Console(highlight=False)

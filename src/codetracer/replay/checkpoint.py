@@ -13,7 +13,7 @@ from codetracer.models import (
     NormalizedTrajectory,
     StepCheckpoint,
 )
-from codetracer.services.file_state import FileStateTracker, StepFileState
+from codetracer.services.file_state import FileStateTracker
 
 logger = logging.getLogger(__name__)
 

@@ -7,7 +7,6 @@ a data-driven provider system modeled after the existing SkillPool pattern.
 from __future__ import annotations
 
 import importlib.util
-import json
 import logging
 import sys
 from abc import ABC, abstractmethod
@@ -268,8 +267,14 @@ class BenchGenerator:
     def generate(self, task_dir: Path, user_dir: Path) -> LoadedBenchProvider:
         from codetracer.utils.llm_generator import (
             extract_code_block as _extract_block,
+        )
+        from codetracer.utils.llm_generator import (
             list_dir as _list_dir,
+        )
+        from codetracer.utils.llm_generator import (
             sample_files as _sample_files,
+        )
+        from codetracer.utils.llm_generator import (
             validate_in_subprocess,
         )
 

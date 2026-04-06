@@ -8,7 +8,6 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-
 INJECTED_DIR_RE = re.compile(r"(?:^|-)injected|negonly|gtonly|gt-\\d+pct|mixed-gt2", re.IGNORECASE)
 
 
