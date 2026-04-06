@@ -1,0 +1,435 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.14s
+Prepared 5 packages in 1.05s
+Installed 5 packages in 53ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==8.4.2
+Resolved 8 packages in 998ms
+Prepared 1 package in 606ms
+Installed 1 package in 19ms
+ + tqdm==4.67.1
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-8.4.2, pluggy-1.6.0
+rootdir: /tests
+collected 2 items
+
+../tests/test_outputs.py FF                                                                                                                              [100%]
+
+=========================================================================== FAILURES ===========================================================================
+____________________________________________________________________ test_reformat_success _____________________________________________________________________
+
+    def test_reformat_success():
+        """Test that the data can be reformatted according to server requirements"""
+
+        # Check that the maximum file size in TARGET_DIR is MAX_SIZE_PER_FILE
+        for file in os.listdir(TARGET_DIR):
+            assert os.path.getsize(os.path.join(TARGET_DIR, file)) <= MAX_SIZE_PER_FILE
+
+        # Check that the number of files in TARGET_DIR is less than MAX_FILES_PER_FOLDER
+>       assert len(os.listdir(TARGET_DIR)) < MAX_FILES_PER_FOLDER
+E       AssertionError: assert 330 < 30
+E        +  where 330 = len(['batch_135', 'batch_136', 'batch_137', 'batch_138', 'batch_139', 'batch_270', ...])
+E        +    where ['batch_135', 'batch_136', 'batch_137', 'batch_138', 'batch_139', 'batch_270', ...] = <built-in function listdir>('/app/c4_reshard/')
+E        +      where <built-in function listdir> = os.listdir
+
+/tests/test_outputs.py:24: AssertionError
+_________________________________________________________________________ test_revert __________________________________________________________________________
+
+    def test_revert():
+        """Test that the data can be reverted to the original state by running revert.py"""
+
+        # Run the revert script with a timeout of 10 minutes
+        try:
+            print("Running the revert script")
+            subprocess.run(["uv", "run", REVERT_SCRIPT], timeout=600)
+        except subprocess.TimeoutExpired:
+            print("The reversion script timed out!")
+
+        # Check that the data is the same as the original data
+        with open(GT_HASHES_FILE, "r") as f:
+            gt_hashes = json.load(f)
+
+        # Assert that the fileset is the same by checking basenames
+>       assert set(gt_hashes.keys()) == set(os.listdir(TARGET_DIR))
+E       AssertionError: assert {'c4-mini-000...0.jsonl', ...} == {'batch_000',...tch_005', ...}
+E
+E         Extra items in the left set:
+E         'c4-mini-07217-of-10000.jsonl'
+E         'c4-mini-02588-of-10000.jsonl'
+E         'c4-mini-09510-of-10000.jsonl'
+E         'c4-mini-09242-of-10000.jsonl'
+E         'c4-mini-04880-of-10000.jsonl'...
+E
+E         ...Full output truncated (10225 lines hidden), use '-vv' to show
+
+/tests/test_outputs.py:42: AssertionError
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+Running the revert script
+Removing existing /app/c4_sample
+Created /app/c4_sample
+Found 330 batch directories to process
+Processing batch_000: 30 files
+Processing batch_001: 30 files
+Processing batch_002: 30 files
+Processing batch_003: 30 files
+Processing batch_004: 30 files
+Processing batch_005: 30 files
+Processing batch_006: 30 files
+Processing batch_007: 30 files
+Processing batch_008: 30 files
+Processing batch_009: 30 files
+Processing batch_010: 30 files
+Processing batch_011: 30 files
+Processing batch_012: 30 files
+Processing batch_013: 30 files
+Processing batch_014: 30 files
+Processing batch_015: 30 files
+Processing batch_016: 30 files
+Processing batch_017: 30 files
+Processing batch_018: 30 files
+Processing batch_019: 30 files
+Processing batch_020: 30 files
+Processing batch_021: 30 files
+Processing batch_022: 30 files
+Processing batch_023: 30 files
+Processing batch_024: 30 files
+Processing batch_025: 30 files
+Processing batch_026: 30 files
+Processing batch_027: 30 files
+Processing batch_028: 30 files
+Processing batch_029: 30 files
+Processing batch_030: 30 files
+Processing batch_031: 30 files
+Processing batch_032: 30 files
+Processing batch_033: 30 files
+Processing batch_034: 30 files
+Processing batch_035: 30 files
+Processing batch_036: 30 files
+Processing batch_037: 30 files
+Processing batch_038: 30 files
+Processing batch_039: 30 files
+Processing batch_040: 30 files
+Processing batch_041: 30 files
+Processing batch_042: 30 files
+Processing batch_043: 30 files
+Processing batch_044: 30 files
+Processing batch_045: 30 files
+Processing batch_046: 30 files
+Processing batch_047: 30 files
+Processing batch_048: 30 files
+Processing batch_049: 30 files
+Processing batch_050: 30 files
+Processing batch_051: 30 files
+Processing batch_052: 30 files
+Processing batch_053: 30 files
+Processing batch_054: 30 files
+Processing batch_055: 30 files
+Processing batch_056: 30 files
+Processing batch_057: 30 files
+Processing batch_058: 30 files
+Processing batch_059: 30 files
+Processing batch_060: 30 files
+Processing batch_061: 30 files
+Processing batch_062: 30 files
+Processing batch_063: 30 files
+Processing batch_064: 30 files
+Processing batch_065: 30 files
+Processing batch_066: 30 files
+Processing batch_067: 30 files
+Processing batch_068: 30 files
+Processing batch_069: 30 files
+Processing batch_070: 30 files
+Processing batch_071: 30 files
+Processing batch_072: 30 files
+Processing batch_073: 30 files
+Processing batch_074: 30 files
+Processing batch_075: 30 files
+Processing batch_076: 30 files
+Processing batch_077: 30 files
+Processing batch_078: 30 files
+Processing batch_079: 30 files
+Processing batch_080: 30 files
+Processing batch_081: 30 files
+Processing batch_082: 30 files
+Processing batch_083: 30 files
+Processing batch_084: 30 files
+Processing batch_085: 30 files
+Processing batch_086: 30 files
+Processing batch_087: 30 files
+Processing batch_088: 30 files
+Processing batch_089: 30 files
+Processing batch_090: 30 files
+Processing batch_091: 30 files
+Processing batch_092: 30 files
+Processing batch_093: 30 files
+Processing batch_094: 30 files
+Processing batch_095: 30 files
+Processing batch_096: 30 files
+Processing batch_097: 30 files
+Processing batch_098: 30 files
+Processing batch_099: 30 files
+Processing batch_100: 30 files
+Processing batch_101: 30 files
+Processing batch_102: 30 files
+Processing batch_103: 30 files
+Processing batch_104: 30 files
+Processing batch_105: 30 files
+Processing batch_106: 30 files
+Processing batch_107: 30 files
+Processing batch_108: 30 files
+Processing batch_109: 30 files
+Processing batch_110: 30 files
+Processing batch_111: 30 files
+Processing batch_112: 30 files
+Processing batch_113: 30 files
+Processing batch_114: 30 files
+Processing batch_115: 30 files
+Processing batch_116: 30 files
+Processing batch_117: 30 files
+Processing batch_118: 30 files
+Processing batch_119: 30 files
+Processing batch_120: 30 files
+Processing batch_121: 30 files
+Processing batch_122: 30 files
+Processing batch_123: 30 files
+Processing batch_124: 30 files
+Processing batch_125: 30 files
+Processing batch_126: 30 files
+Processing batch_127: 30 files
+Processing batch_128: 30 files
+Processing batch_129: 30 files
+Processing batch_130: 30 files
+Processing batch_131: 30 files
+Processing batch_132: 30 files
+Processing batch_133: 30 files
+Processing batch_134: 30 files
+Processing batch_135: 30 files
+Processing batch_136: 30 files
+Processing batch_137: 30 files
+Processing batch_138: 30 files
+Processing batch_139: 30 files
+Processing batch_140: 30 files
+Processing batch_141: 30 files
+Processing batch_142: 30 files
+Processing batch_143: 30 files
+Processing batch_144: 30 files
+Processing batch_145: 30 files
+Processing batch_146: 30 files
+Processing batch_147: 30 files
+Processing batch_148: 30 files
+Processing batch_149: 30 files
+Processing batch_150: 30 files
+Processing batch_151: 30 files
+Processing batch_152: 30 files
+Processing batch_153: 30 files
+Processing batch_154: 30 files
+Processing batch_155: 30 files
+Processing batch_156: 30 files
+Processing batch_157: 30 files
+Processing batch_158: 30 files
+Processing batch_159: 30 files
+Processing batch_160: 30 files
+Processing batch_161: 30 files
+Processing batch_162: 30 files
+Processing batch_163: 30 files
+Processing batch_164: 30 files
+Processing batch_165: 30 files
+Processing batch_166: 30 files
+Processing batch_167: 30 files
+Processing batch_168: 30 files
+Processing batch_169: 30 files
+Processing batch_170: 30 files
+Processing batch_171: 30 files
+Processing batch_172: 30 files
+Processing batch_173: 30 files
+Processing batch_174: 30 files
+Processing batch_175: 30 files
+Processing batch_176: 30 files
+Processing batch_177: 30 files
+Processing batch_178: 30 files
+Processing batch_179: 30 files
+Processing batch_180: 30 files
+Processing batch_181: 30 files
+Processing batch_182: 30 files
+Processing batch_183: 30 files
+Processing batch_184: 30 files
+Processing batch_185: 30 files
+Processing batch_186: 30 files
+Processing batch_187: 30 files
+Processing batch_188: 30 files
+Processing batch_189: 30 files
+Processing batch_190: 30 files
+Processing batch_191: 30 files
+Processing batch_192: 30 files
+Processing batch_193: 30 files
+Processing batch_194: 30 files
+Processing batch_195: 30 files
+Processing batch_196: 30 files
+Processing batch_197: 30 files
+Processing batch_198: 30 files
+Processing batch_199: 30 files
+Processing batch_200: 30 files
+Processing batch_201: 30 files
+Processing batch_202: 30 files
+Processing batch_203: 30 files
+Processing batch_204: 30 files
+Processing batch_205: 30 files
+Processing batch_206: 30 files
+Processing batch_207: 30 files
+Processing batch_208: 30 files
+Processing batch_209: 30 files
+Processing batch_210: 30 files
+Processing batch_211: 30 files
+Processing batch_212: 30 files
+Processing batch_213: 30 files
+Processing batch_214: 30 files
+Processing batch_215: 30 files
+Processing batch_216: 30 files
+Processing batch_217: 30 files
+Processing batch_218: 30 files
+Processing batch_219: 30 files
+Processing batch_220: 30 files
+Processing batch_221: 30 files
+Processing batch_222: 30 files
+Processing batch_223: 30 files
+Processing batch_224: 30 files
+Processing batch_225: 30 files
+Processing batch_226: 30 files
+Processing batch_227: 30 files
+Processing batch_228: 30 files
+Processing batch_229: 30 files
+Processing batch_230: 30 files
+Processing batch_231: 30 files
+Processing batch_232: 30 files
+Processing batch_233: 30 files
+Processing batch_234: 30 files
+Processing batch_235: 30 files
+Processing batch_236: 30 files
+Processing batch_237: 30 files
+Processing batch_238: 30 files
+Processing batch_239: 30 files
+Processing batch_240: 30 files
+Processing batch_241: 30 files
+Processing batch_242: 30 files
+Processing batch_243: 30 files
+Processing batch_244: 30 files
+Processing batch_245: 30 files
+Processing batch_246: 30 files
+Processing batch_247: 30 files
+Processing batch_248: 30 files
+Processing batch_249: 30 files
+Processing batch_250: 30 files
+Processing batch_251: 30 files
+Processing batch_252: 30 files
+Processing batch_253: 30 files
+Processing batch_254: 30 files
+Processing batch_255: 30 files
+Processing batch_256: 30 files
+Processing batch_257: 30 files
+Processing batch_258: 30 files
+Processing batch_259: 30 files
+Processing batch_260: 30 files
+Processing batch_261: 30 files
+Processing batch_262: 30 files
+Processing batch_263: 30 files
+Processing batch_264: 30 files
+Processing batch_265: 30 files
+Processing batch_266: 30 files
+Processing batch_267: 30 files
+Processing batch_268: 30 files
+Processing batch_269: 30 files
+Processing batch_270: 30 files
+Processing batch_271: 30 files
+Processing batch_272: 30 files
+Processing batch_273: 30 files
+Processing batch_274: 30 files
+Processing batch_275: 30 files
+Processing batch_276: 30 files
+Processing batch_277: 30 files
+Processing batch_278: 30 files
+Processing batch_279: 30 files
+Processing batch_280: 30 files
+Processing batch_281: 30 files
+Processing batch_282: 30 files
+Processing batch_283: 30 files
+Processing batch_284: 30 files
+Processing batch_285: 30 files
+Processing batch_286: 30 files
+Processing batch_287: 30 files
+Processing batch_288: 30 files
+Processing batch_289: 30 files
+Processing batch_290: 30 files
+Processing batch_291: 30 files
+Processing batch_292: 30 files
+Processing batch_293: 30 files
+Processing batch_294: 30 files
+Processing batch_295: 30 files
+Processing batch_296: 30 files
+Processing batch_297: 30 files
+Processing batch_298: 30 files
+Processing batch_299: 30 files
+Processing batch_300: 30 files
+Processing batch_301: 30 files
+Processing batch_302: 30 files
+Processing batch_303: 30 files
+Processing batch_304: 30 files
+Processing batch_305: 30 files
+Processing batch_306: 30 files
+Processing batch_307: 30 files
+Processing batch_308: 30 files
+Processing batch_309: 30 files
+Processing batch_310: 30 files
+Processing batch_311: 30 files
+Processing batch_312: 30 files
+Processing batch_313: 30 files
+Processing batch_314: 30 files
+Processing batch_315: 30 files
+Processing batch_316: 30 files
+Processing batch_317: 30 files
+Processing batch_318: 30 files
+Processing batch_319: 30 files
+Processing batch_320: 30 files
+Processing batch_321: 30 files
+Processing batch_322: 30 files
+Processing batch_323: 30 files
+Processing batch_324: 30 files
+Processing batch_325: 30 files
+Processing batch_326: 30 files
+Processing batch_327: 30 files
+Processing batch_328: 30 files
+Processing batch_329: 28 files
+
+Revert complete!
+Restored 9898 files to /app/c4_sample
+Verification: 9898 JSONL files now in /app/c4_sample
+=================================================================== short test summary info ====================================================================
+FAILED ../tests/test_outputs.py::test_reformat_success - AssertionError: assert 330 < 30
+FAILED ../tests/test_outputs.py::test_revert - AssertionError: assert {'c4-mini-000...0.jsonl', ...} == {'batch_000',...tch_005', ...}
+====================================================================== 2 failed in 8.15s =======================================================================
+root@rack-ge107-ya-20250517193277:/app#

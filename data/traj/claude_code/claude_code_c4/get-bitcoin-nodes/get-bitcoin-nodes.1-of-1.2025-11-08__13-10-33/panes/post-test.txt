@@ -1,0 +1,54 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Collecting pytest
+  Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+Requirement already satisfied: requests in /usr/local/lib/python3.13/site-packages (2.32.5)
+Collecting psutil
+  Downloading psutil-7.1.3-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (23 kB)
+Collecting iniconfig>=1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=20 (from pytest)
+  Using cached packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib/python3.13/site-packages (from requests) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.13/site-packages (from requests) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.13/site-packages (from requests) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.13/site-packages (from requests) (2025.10.5)
+Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+Downloading psutil-7.1.3-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (263 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Using cached packaging-25.0-py3-none-any.whl (66 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 3.7 MB/s eta 0:00:00
+Installing collected packages: pygments, psutil, pluggy, packaging, iniconfig, pytest
+Successfully installed iniconfig-2.3.0 packaging-25.0 pluggy-1.6.0 psutil-7.1.3 pygments-2.19.2 pytest-8.4.2
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your syst
+em unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you ar
+e doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.3.1 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-8.4.2, pluggy-1.6.0 -- /usr/local/bin/python3.13
+cachedir: .pytest_cache
+rootdir: /tests
+collected 5 items
+
+../tests/test_outputs.py::test_service_process_running PASSED                                                                                            [ 20%]
+../tests/test_outputs.py::test_service_responding SKIPPED (Bitcoin service does not appear to be running)                                                [ 40%]
+../tests/test_outputs.py::test_block_endpoint SKIPPED (Bitcoin service does not appear to be running)                                                    [ 60%]
+../tests/test_outputs.py::test_transaction_endpoint SKIPPED (Bitcoin service does not appear to be running)                                              [ 80%]
+../tests/test_outputs.py::test_error_handling SKIPPED (Bitcoin service does not appear to be running)                                                    [100%]
+
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_service_process_running
+SKIPPED [1] ../tests/test_outputs.py:48: Bitcoin service does not appear to be running
+SKIPPED [1] ../tests/test_outputs.py:61: Bitcoin service does not appear to be running
+SKIPPED [1] ../tests/test_outputs.py:93: Bitcoin service does not appear to be running
+SKIPPED [1] ../tests/test_outputs.py:132: Bitcoin service does not appear to be running
+================================================================ 1 passed, 4 skipped in 50.14s =================================================================
+root@rack-ge107-ya-20250517193277:/app#

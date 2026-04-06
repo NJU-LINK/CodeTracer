@@ -1,0 +1,116 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.31s
+Prepared 5 packages in 1.06s
+Installed 5 packages in 62ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==8.4.2
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-8.4.2, pluggy-1.6.0
+rootdir: /tests
+collected 5 items
+
+../tests/test_outputs.py FFFFF                                                                                                                           [100%]
+
+=========================================================================== FAILURES ===========================================================================
+__________________________________________________________________ test_python_script_exists ___________________________________________________________________
+
+    def test_python_script_exists():
+        """Test that the Python script exists."""
+>       assert os.path.exists("/app/text_processor.py"), "text_processor.py does not exist"
+E       AssertionError: text_processor.py does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f98cd00f240>('/app/text_processor.py')
+E        +    where <function exists at 0x7f98cd00f240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:9: AssertionError
+________________________________________________________________ test_python_script_executable _________________________________________________________________
+
+    def test_python_script_executable():
+        """Test that the Python script is executable."""
+>       assert os.access("/app/text_processor.py", os.X_OK), (
+            "text_processor.py is not executable"
+        )
+E       AssertionError: text_processor.py is not executable
+E       assert False
+E        +  where False = <built-in function access>('/app/text_processor.py', 1)
+E        +    where <built-in function access> = os.access
+E        +    and   1 = os.X_OK
+
+/tests/test_outputs.py:14: AssertionError
+___________________________________________________________________ test_sample_text_exists ____________________________________________________________________
+
+    def test_sample_text_exists():
+        """Test that the sample text file exists."""
+>       assert os.path.exists("/app/sample.txt"), "sample.txt does not exist"
+E       AssertionError: sample.txt does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f98cd00f240>('/app/sample.txt')
+E        +    where <function exists at 0x7f98cd00f240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:21: AssertionError
+___________________________________________________________________ test_sample_text_content ___________________________________________________________________
+
+    def test_sample_text_content():
+        """Test that the sample text file contains the expected content."""
+>       with open("/app/sample.txt", "r") as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/sample.txt'
+
+/tests/test_outputs.py:26: FileNotFoundError
+______________________________________________________________________ test_script_output ______________________________________________________________________
+
+    def test_script_output():
+        """Test that the script produces the expected output."""
+        # Run the script with the sample text file
+        result = subprocess.run(
+            ["python", "/app/text_processor.py", "/app/sample.txt"],
+            capture_output=True,
+            text=True,
+        )
+
+        # Check that the script executed successfully
+>       assert result.returncode == 0, f"Script failed with error: {result.stderr}"
+E       AssertionError: Script failed with error: python: can't open file '/app/text_processor.py': [Errno 2] No such file or directory
+E
+E       assert 2 == 0
+E        +  where 2 = CompletedProcess(args=['python', '/app/text_processor.py', '/app/sample.txt'], returncode=2, stdout='', stderr="python: can't open file '/
+app/text_processor.py': [Errno 2] No such file or directory\n").returncode
+
+/tests/test_outputs.py:42: AssertionError
+=================================================================== short test summary info ====================================================================
+FAILED ../tests/test_outputs.py::test_python_script_exists - AssertionError: text_processor.py does not exist
+FAILED ../tests/test_outputs.py::test_python_script_executable - AssertionError: text_processor.py is not executable
+FAILED ../tests/test_outputs.py::test_sample_text_exists - AssertionError: sample.txt does not exist
+FAILED ../tests/test_outputs.py::test_sample_text_content - FileNotFoundError: [Errno 2] No such file or directory: '/app/sample.txt'
+FAILED ../tests/test_outputs.py::test_script_output - AssertionError: Script failed with error: python: can't open file '/app/text_processor.py': [Errno 2] No s
+uch file or directory
+====================================================================== 5 failed in 0.08s =======================================================================
+root@rack-ge107-ya-20250517193277:/app#

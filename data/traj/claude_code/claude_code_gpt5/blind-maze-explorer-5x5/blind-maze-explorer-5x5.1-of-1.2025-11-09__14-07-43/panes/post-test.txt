@@ -1,0 +1,120 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.22s
+Prepared 5 packages in 1.00s
+Installed 5 packages in 56ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 2 items
+
+../tests/test_outputs.py .F                                                                                                                              [100%]
+
+=========================================================================== FAILURES ===========================================================================
+____________________________________________________________________ test_maze_map_contents ____________________________________________________________________
+
+    def test_maze_map_contents():
+        """
+        Test that the maze map content matches the ground truth maze layout.
+        Ignores empty lines and whitespace at the end of lines.
+        """
+        map_file_path = find_maze_map_file()
+
+        assert map_file_path is not None, (
+            "Could not find maze_map.txt file anywhere in the directory structure"
+        )
+
+        # Load agent's maze map from file
+        try:
+            agent_map_raw = map_file_path.read_text().strip()
+        except Exception as e:
+            pytest.fail(f"Failed to read maze map file: {e}")
+
+        # Normalize agent's map by removing trailing whitespace
+        agent_map_lines = [
+            line.rstrip() for line in agent_map_raw.splitlines() if line.strip()
+        ]
+        agent_map = "\n".join(agent_map_lines)
+
+        # Get ground truth maze
+        ground_truth_map = get_ground_truth_map()
+
+        # Print the maps for debugging
+        print("\nAgent's maze map:")
+        print(agent_map)
+        print("\nGround truth maze:")
+        print(ground_truth_map)
+
+        # Compare maps
+>       assert agent_map == ground_truth_map, (
+            f"Agent's maze map does not match the ground truth maze.\n"
+            f"Expected:\n{ground_truth_map}\n\n"
+            f"Got:\n{agent_map}"
+        )
+E       AssertionError: Agent's maze map does not match the ground truth maze.
+E         Expected:
+E         #####
+E         # #S#
+E         #E# #
+E         #   #
+E         #####
+E
+E         Got:
+E         S
+E       assert 'S' == '#####\n# #S#...n#   #\n#####'
+E
+E         + S
+E         - #####
+E         - # #S#
+E         - #E# #
+E         - #   #
+E         - #####
+
+/tests/test_outputs.py:125: AssertionError
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+
+Agent's maze map:
+S
+
+Ground truth maze:
+#####
+# #S#
+#E# #
+#   #
+#####
+============================================================================ PASSES ============================================================================
+__________________________________________________________________ test_maze_map_file_exists ___________________________________________________________________
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+✓ Maze map file exists at /app/maze_map.txt
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_maze_map_file_exists
+FAILED ../tests/test_outputs.py::test_maze_map_contents - AssertionError: Agent's maze map does not match the ground truth maze.
+================================================================= 1 failed, 1 passed in 0.08s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

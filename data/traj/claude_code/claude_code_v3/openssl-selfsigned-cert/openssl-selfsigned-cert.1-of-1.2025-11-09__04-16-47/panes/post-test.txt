@@ -1,0 +1,127 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 37 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.28s
+Prepared 5 packages in 957ms
+Installed 5 packages in 52ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 6 items
+
+../tests/test_outputs.py FFFFFF                                                                                                                          [100%]
+
+=========================================================================== FAILURES ===========================================================================
+___________________________________________________________________ test_directory_structure ___________________________________________________________________
+
+    def test_directory_structure():
+        """Test that the required directory structure exists."""
+        directory = "/app/ssl"
+>       assert os.path.exists(directory), f"Directory {directory} does not exist"
+E       AssertionError: Directory /app/ssl does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f9bc5d2b240>('/app/ssl')
+E        +    where <function exists at 0x7f9bc5d2b240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:11: AssertionError
+________________________________________________________________________ test_key_file _________________________________________________________________________
+
+    def test_key_file():
+        """Test that the private key file exists with correct permissions."""
+        key_file = "/app/ssl/server.key"
+>       assert os.path.exists(key_file), "Private key file does not exist"
+E       AssertionError: Private key file does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f9bc5d2b240>('/app/ssl/server.key')
+E        +    where <function exists at 0x7f9bc5d2b240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:18: AssertionError
+____________________________________________________________________ test_certificate_file _____________________________________________________________________
+
+    def test_certificate_file():
+        """Test that the certificate file exists with correct attributes."""
+        cert_file = "/app/ssl/server.crt"
+>       assert os.path.exists(cert_file), "Certificate file does not exist"
+E       AssertionError: Certificate file does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f9bc5d2b240>('/app/ssl/server.crt')
+E        +    where <function exists at 0x7f9bc5d2b240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:37: AssertionError
+____________________________________________________________________ test_combined_pem_file ____________________________________________________________________
+
+    def test_combined_pem_file():
+        """Test that the combined PEM file exists with both key and certificate."""
+        pem_file = "/app/ssl/server.pem"
+>       assert os.path.exists(pem_file), "Combined PEM file does not exist"
+E       AssertionError: Combined PEM file does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f9bc5d2b240>('/app/ssl/server.pem')
+E        +    where <function exists at 0x7f9bc5d2b240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:100: AssertionError
+____________________________________________________________________ test_verification_file ____________________________________________________________________
+
+    def test_verification_file():
+        """Test that the verification file exists with correct content."""
+        verification_file = "/app/ssl/verification.txt"
+>       assert os.path.exists(verification_file), "Verification file does not exist"
+E       AssertionError: Verification file does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f9bc5d2b240>('/app/ssl/verification.txt')
+E        +    where <function exists at 0x7f9bc5d2b240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:121: AssertionError
+_______________________________________________________________ test_python_verification_script ________________________________________________________________
+
+    def test_python_verification_script():
+        """Test that the Python verification script exists and works correctly."""
+        script_path = "/app/check_cert.py"
+>       assert os.path.exists(script_path), "Python verification script does not exist"
+E       AssertionError: Python verification script does not exist
+E       assert False
+E        +  where False = <function exists at 0x7f9bc5d2b240>('/app/check_cert.py')
+E        +    where <function exists at 0x7f9bc5d2b240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:156: AssertionError
+=================================================================== short test summary info ====================================================================
+FAILED ../tests/test_outputs.py::test_directory_structure - AssertionError: Directory /app/ssl does not exist
+FAILED ../tests/test_outputs.py::test_key_file - AssertionError: Private key file does not exist
+FAILED ../tests/test_outputs.py::test_certificate_file - AssertionError: Certificate file does not exist
+FAILED ../tests/test_outputs.py::test_combined_pem_file - AssertionError: Combined PEM file does not exist
+FAILED ../tests/test_outputs.py::test_verification_file - AssertionError: Verification file does not exist
+FAILED ../tests/test_outputs.py::test_python_verification_script - AssertionError: Python verification script does not exist
+====================================================================== 6 failed in 0.10s =======================================================================
+root@rack-ge107-ya-20250517193277:/app#

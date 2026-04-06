@@ -1,0 +1,110 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 38 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.31s
+Prepared 5 packages in 1.15s
+Installed 5 packages in 45ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 6 items
+
+../tests/test_outputs.py FFFF.F                                                                                                                          [100%]
+
+=========================================================================== FAILURES ===========================================================================
+_____________________________________________________________ test_original_sensitive_data_is_gone _____________________________________________________________
+
+    def test_original_sensitive_data_is_gone():
+        """Verify original sensitive files and directory are deleted."""
+>       assert not SENSITIVE_FILE_1.exists(), (
+            f"Original sensitive file {SENSITIVE_FILE_1} still exists."
+        )
+E       AssertionError: Original sensitive file /opt/sensitive_service_data/user_secrets.txt still exists.
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/opt/sensitive_service_data/user_secrets.txt').exists
+
+/tests/test_outputs.py:30: AssertionError
+___________________________________________________________________ test_config_file_is_gone ___________________________________________________________________
+
+    def test_config_file_is_gone():
+        """Verify the service configuration file is deleted."""
+>       assert not CONFIG_FILE_PATH.exists(), (
+            f"Service configuration file {CONFIG_FILE_PATH} still exists."
+        )
+E       AssertionError: Service configuration file /etc/service_config.ini still exists.
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/etc/service_config.ini').exists
+
+/tests/test_outputs.py:40: AssertionError
+____________________________________________________________________ test_pid_file_is_gone _____________________________________________________________________
+
+    def test_pid_file_is_gone():
+        """Verify the service PID file is deleted."""
+>       assert not PID_FILE_PATH.exists(), f"Service PID file {PID_FILE_PATH} still exists."
+E       AssertionError: Service PID file /tmp/service.pid still exists.
+E       assert not True
+E        +  where True = exists()
+E        +    where exists = PosixPath('/tmp/service.pid').exists
+
+/tests/test_outputs.py:47: AssertionError
+________________________________________________________________ test_encrypted_archive_exists _________________________________________________________________
+
+    def test_encrypted_archive_exists():
+        """Verify the final encrypted archive exists."""
+>       assert FINAL_ENCRYPTED_ARCHIVE.exists(), (
+            f"Final encrypted archive {FINAL_ENCRYPTED_ARCHIVE} does not exist."
+        )
+E       AssertionError: Final encrypted archive /app/service_archive.gpg does not exist.
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/app/service_archive.gpg').exists
+
+/tests/test_outputs.py:52: AssertionError
+____________________________________________________ test_archive_is_correctly_encrypted_and_contains_data _____________________________________________________
+
+    def test_archive_is_correctly_encrypted_and_contains_data():
+        """Decrypt the archive and verify its contents."""
+        if not FINAL_ENCRYPTED_ARCHIVE.exists():
+>           pytest.fail(f"{FINAL_ENCRYPTED_ARCHIVE} not found for decryption test.")
+E           Failed: /app/service_archive.gpg not found for decryption test.
+
+/tests/test_outputs.py:70: Failed
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_intermediate_unencrypted_archive_is_gone
+FAILED ../tests/test_outputs.py::test_original_sensitive_data_is_gone - AssertionError: Original sensitive file /opt/sensitive_service_data/user_secrets.txt sti
+ll exists.
+FAILED ../tests/test_outputs.py::test_config_file_is_gone - AssertionError: Service configuration file /etc/service_config.ini still exists.
+FAILED ../tests/test_outputs.py::test_pid_file_is_gone - AssertionError: Service PID file /tmp/service.pid still exists.
+FAILED ../tests/test_outputs.py::test_encrypted_archive_exists - AssertionError: Final encrypted archive /app/service_archive.gpg does not exist.
+FAILED ../tests/test_outputs.py::test_archive_is_correctly_encrypted_and_contains_data - Failed: /app/service_archive.gpg not found for decryption test.
+================================================================= 5 failed, 1 passed in 0.08s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

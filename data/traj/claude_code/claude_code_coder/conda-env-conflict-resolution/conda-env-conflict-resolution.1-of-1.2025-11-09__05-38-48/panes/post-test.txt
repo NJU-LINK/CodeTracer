@@ -1,0 +1,79 @@
+(base) root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Collecting pytest
+  Downloading pytest-9.0.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: packaging>=22 in /opt/conda/lib/python3.12/site-packages (from pytest) (24.2)
+Requirement already satisfied: pluggy<2,>=1.5 in /opt/conda/lib/python3.12/site-packages (from pytest) (1.5.0)
+Requirement already satisfied: pygments>=2.7.2 in /opt/conda/lib/python3.12/site-packages (from pytest) (2.15.1)
+Downloading pytest-9.0.0-py3-none-any.whl (373 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Installing collected packages: iniconfig, pytest
+Successfully installed iniconfig-2.3.0 pytest-9.0.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your syst
+em unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you a
+re doing and want to suppress this warning.
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.12.9, pytest-9.0.0, pluggy-1.5.0 -- /opt/conda/bin/python
+cachedir: .pytest_cache
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py::test_environment_exists PASSED                                                                                                 [ 33%]
+../tests/test_outputs.py::test_environment_yml_modified FAILED                                                                                           [ 66%]
+../tests/test_outputs.py::test_imports_script_runs PASSED                                                                                                [100%]
+
+=========================================================================== FAILURES ===========================================================================
+________________________________________________________________ test_environment_yml_modified _________________________________________________________________
+
+    def test_environment_yml_modified():
+        """Test that the environment.yml file was modified to fix the conflicts."""
+        with open("/app/project/environment.yml", "r") as f:
+            content = f.read()
+
+        # Check that the numpy version is compatible with scipy
+        numpy_match = re.search(r"numpy=([0-9.]+)", content)
+        scipy_match = re.search(r"scipy=([0-9.]+)", content)
+
+        if numpy_match and scipy_match:
+            numpy_version = numpy_match.group(1)
+            scipy_version = scipy_match.group(1)
+
+            # Either numpy was upgraded or scipy was downgraded
+            assert not (numpy_version == "1.22.0" and scipy_version == "1.9.0"), (
+                "The numpy and scipy version conflict was not resolved"
+            )
+
+        # Check that the CUDA conflict between TensorFlow and PyTorch was resolved
+        # Either separate CUDA versions, CPU-only version, or one package removed
+        pytorch_tf_conflict_resolved = (
+            ("cudatoolkit=11.2" not in content or "pytorch=1.12.0" not in content)
+            or ("cudatoolkit=11.6" in content)
+            or ("cpuonly" in content)
+        )
+>       assert pytorch_tf_conflict_resolved, "torch and tf conflict was not resolved"
+E       AssertionError: torch and tf conflict was not resolved
+E       assert False
+
+/tests/test_outputs.py:39: AssertionError
+============================================================================ PASSES ============================================================================
+___________________________________________________________________ test_imports_script_runs ___________________________________________________________________
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+Contents of test directory:
+total 32
+drwxr-xr-x  3 root root 4096 Nov  9 06:12 .
+drwxr-xr-x 15 root root 4096 Nov  9 06:12 ..
+drwxr-xr-x  2 root root  133 Nov  9 06:12 __pycache__
+-rw-r--r--  1 root root  273 Oct 25 18:11 run-tests.sh
+-rw-r--r--  1 root root   58 Oct 25 18:11 run-uv-pytest.sh
+-rw-r--r--  1 root root  583 Oct 25 18:11 setup-uv-pytest.sh
+-rw-r--r--  1 root root  380 Oct 25 18:11 setup-uv-pytest.sh.backup
+-rw-r--r--  1 root root 1203 Oct 25 18:11 test_imports.py
+-rw-r--r--  1 root root 2856 Oct 25 18:11 test_outputs.py
+
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_environment_exists
+PASSED ../tests/test_outputs.py::test_imports_script_runs
+FAILED ../tests/test_outputs.py::test_environment_yml_modified - AssertionError: torch and tf conflict was not resolved
+================================================================= 1 failed, 2 passed in 5.32s ==================================================================
+(base) root@rack-ge107-ya-20250517193277:/app#

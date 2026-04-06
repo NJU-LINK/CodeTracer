@@ -1,0 +1,68 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 4,
+            "passed": 1,
+            "failed": 3,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1775051541.944733,
+            "stop": 1775051542.0146964
+        },
+        "tests": [
+            {
+                "name": "test_outputs.py::test_c_extension_exists",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.000838738982565701,
+                "start": 1775051541.9764712,
+                "stop": 1775051541.9905045,
+                "retries": 0,
+                "file_path": "test_outputs.py",
+                "trace": "def test_c_extension_exists():\n        \"\"\"Verify that a compiled C extension actually exists\"\"\"\n        try:\n            # Try to import the C extension module\n            sys.path.append(\"/app\")\n>           import portfolio_optimized_c\nE           ModuleNotFoundError: No module named 'portfolio_optimized_c'\n\n/tests/test_outputs.py:39: ModuleNotFoundError\n\nDuring handling of the above exception, another exception occurred:\n\n    def test_c_extension_exists():\n        \"\"\"Verify that a compiled C extension actually exists\"\"\"\n        try:\n            # Try to import the C extension module\n            sys.path.append(\"/app\")\n            import portfolio_optimized_c\n    \n            # Check that it's actually a compiled extension, not pure Python\n            module_file = portfolio_optimized_c.__file__\n            assert module_file is not None, \"C extension module has no file attribute\"\n    \n            # Compiled extensions typically end with .so, .pyd, or similar\n            assert not module_file.endswith(\".py\"), (\n                f\"Expected compiled C extension, but got Python file: {module_file}\"\n            )\n            assert any(module_file.endswith(ext) for ext in [\".so\", \".pyd\", \".dll\"]), (\n                f\"Module doesn't appear to be a compiled extension: {module_file}\"\n            )\n    \n            # Verify the required functions exist\n            assert hasattr(portfolio_optimized_c, \"portfolio_risk_c\"), (\n                \"Missing portfolio_risk_c function\"\n            )\n            assert hasattr(portfolio_optimized_c, \"portfolio_return_c\"), (\n                \"Missing portfolio_return_c function\"\n            )\n    \n        except ImportError as e:\n>           pytest.fail(\n                f\"C extension module not found. Did you run \"\n                f\"'python setup.py build_ext --inplace'? Error: {e}\"\n            )\nE           Failed: C extension module not found. Did you run 'python setup.py build_ext --inplace'? Error: No module named 'portfolio_optimized_c'\n\n/tests/test_outputs.py:62: Failed",
+                "message": "The test failed in the call phase"
+            },
+            {
+                "name": "test_outputs.py::test_baseline_functionality",
+                "status": "passed",
+                "duration": 0.0009354240028187633,
+                "start": 1775051541.9950264,
+                "stop": 1775051541.9963713,
+                "retries": 0,
+                "file_path": "test_outputs.py"
+            },
+            {
+                "name": "test_outputs.py::test_correctness_small",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.0011358630144968629,
+                "start": 1775051541.9967997,
+                "stop": 1775051542.0012243,
+                "retries": 0,
+                "file_path": "test_outputs.py",
+                "trace": "def test_correctness_small():\n        \"\"\"Test correctness on small portfolio\"\"\"\n        # Import from wrapper, which should use the C extension\n        sys.path.append(\"/app\")\n>       from portfolio_optimized import portfolio_return_c, portfolio_risk_c\nE         File \"/app/portfolio_optimized.py\", line 1\nE           , py'\nE               ^\nE       SyntaxError: unterminated string literal (detected at line 1)\n\n/tests/test_outputs.py:85: SyntaxError",
+                "message": "The test failed in the call phase"
+            },
+            {
+                "name": "test_outputs.py::test_performance_and_scalability",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.0008284180075861514,
+                "start": 1775051542.0014534,
+                "stop": 1775051542.0057075,
+                "retries": 2,
+                "file_path": "test_outputs.py",
+                "tags": [
+                    "parametrize::n::[5000, 6000, 8000]"
+                ],
+                "trace": "n = 8000\n\n    @pytest.mark.parametrize(\"n\", [5000, 6000, 8000])\n    def test_performance_and_scalability(n):\n        \"\"\"Test performance and scalability requirements for large portfolios\"\"\"\n        sys.path.append(\"/app\")\n>       from portfolio_optimized import portfolio_return_c, portfolio_risk_c\nE         File \"/app/portfolio_optimized.py\", line 1\nE           , py'\nE               ^\nE       SyntaxError: unterminated string literal (detected at line 1)\n\n/tests/test_outputs.py:109: SyntaxError",
+                "message": "The test failed in the call phase"
+            }
+        ]
+    }
+}

@@ -1,0 +1,106 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.34s
+Prepared 5 packages in 1.00s
+Installed 5 packages in 58ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+Updated `.python-version` from `3.13` -> `3.11`
+Using CPython 3.11.2 interpreter at: /usr/bin/python3.11
+Removed virtual environment at: .venv
+Creating virtual environment at: .venv
+Resolved 15 packages in 2.22s
+Prepared 8 packages in 6.94s
+Installed 13 packages in 441ms
+ + fasttext-wheel==0.9.2
+ + iniconfig==2.3.0
+ + joblib==1.5.2
+ + numpy==1.24.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pybind11==3.0.1
+ + pygments==2.19.2
+ + pytest==9.0.0
+ + scikit-learn==1.7.2
+ + scipy==1.15.3
+ + setuptools==80.9.0
+ + threadpoolctl==3.6.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.11.2, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 2 items
+
+../tests/test_outputs.py FF                                                                                                                              [100%]
+
+=========================================================================== FAILURES ===========================================================================
+________________________________________________________________________ test_accuracy _________________________________________________________________________
+
+    def test_accuracy():
+        """Test accuracy of the fasttext model on the test set."""
+>       model = fasttext.load_model("/app/model.bin")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:14:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv/lib/python3.11/site-packages/fasttext/FastText.py:441: in load_model
+    return _FastText(model_path=path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <fasttext.FastText._FastText object at 0x7fc26df3f250>, model_path = '/app/model.bin', args = None
+
+    def __init__(self, model_path=None, args=None):
+        self.f = fasttext.fasttext()
+        if model_path is not None:
+>           self.f.loadModel(model_path)
+E           ValueError: /app/model.bin cannot be opened for loading!
+
+.venv/lib/python3.11/site-packages/fasttext/FastText.py:98: ValueError
+--------------------------------------------------------------------- Captured stderr call ---------------------------------------------------------------------
+Warning : `load_model` does not return WordVectorModel or SupervisedModel any more, but a `FastText` object which is very similar.
+_______________________________________________________________________ test_model_size ________________________________________________________________________
+
+    def test_model_size():
+        """Test the size of the model."""
+>       model_size = os.path.getsize("/app/model.bin")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:35:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+filename = '/app/model.bin'
+
+>   ???
+E   FileNotFoundError: [Errno 2] No such file or directory: '/app/model.bin'
+
+<frozen genericpath>:50: FileNotFoundError
+=================================================================== short test summary info ====================================================================
+FAILED ../tests/test_outputs.py::test_accuracy - ValueError: /app/model.bin cannot be opened for loading!
+FAILED ../tests/test_outputs.py::test_model_size - FileNotFoundError: [Errno 2] No such file or directory: '/app/model.bin'
+====================================================================== 2 failed in 1.81s =======================================================================
+root@rack-ge107-ya-20250517193277:/app#

@@ -1,0 +1,62 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.38s
+Prepared 5 packages in 1.10s
+Installed 5 packages in 58ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==8.4.2
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-8.4.2, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py ..F                                                                                                                             [100%]
+
+=========================================================================== FAILURES ===========================================================================
+_____________________________________________________________________ test_avg_temp_value ______________________________________________________________________
+
+    def test_avg_temp_value():
+        # Compare ground truth answer to agent answer up to 3 decimals
+        GROUND_TRUTH = 11.428571428571429
+        agent_answer = float(Path("/app/avg_temp.txt").read_text().strip())
+>       assert round(GROUND_TRUTH, 3) == round(agent_answer, 3), (
+            f"Expected {round(GROUND_TRUTH, 3)} but got {round(agent_answer, 3)}"
+        )
+E       AssertionError: Expected 11.429 but got 11.43
+E       assert 11.429 == 11.43
+E        +  where 11.429 = round(11.428571428571429, 3)
+E        +  and   11.43 = round(11.43, 3)
+
+/tests/test_outputs.py:26: AssertionError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_avg_temp_file_exists
+PASSED ../tests/test_outputs.py::test_avg_temp_file_format
+FAILED ../tests/test_outputs.py::test_avg_temp_value - AssertionError: Expected 11.429 but got 11.43
+================================================================= 1 failed, 2 passed in 0.06s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

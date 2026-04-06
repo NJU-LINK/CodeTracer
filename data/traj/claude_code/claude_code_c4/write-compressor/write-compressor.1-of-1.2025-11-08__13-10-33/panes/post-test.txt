@@ -1,0 +1,93 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://security.ubuntu.com/ubuntu noble-security InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu noble InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Hit:4 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (8.5.0-2ubuntu10.6).
+0 upgraded, 0 newly installed, 0 to remove and 31 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.28s
+Prepared 5 packages in 1.04s
+Installed 5 packages in 57ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==8.4.2
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.12.3, pytest-8.4.2, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py FFF                                                                                                                             [100%]
+
+=========================================================================== FAILURES ===========================================================================
+_________________________________________________________________ test_compressed_file_exists __________________________________________________________________
+
+    def test_compressed_file_exists():
+        """Test that the compressed file was created."""
+        setup()
+        compressed_path = Path("/app/data.comp")
+>       assert compressed_path.exists(), f"File {compressed_path} does not exist"
+E       AssertionError: File /app/data.comp does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/app/data.comp').exists
+
+/tests/test_outputs.py:22: AssertionError
+_____________________________________________________________ test_decompression_produces_original _____________________________________________________________
+
+    def test_decompression_produces_original():
+        """Test that decompressing the compressed file produces the file content."""
+        setup()
+        # Paths
+        compressed_path = Path("/app/data.comp")
+        decompressor_path = Path("/app/decomp2")
+        original_path = Path("/app/data.txt")
+
+        # Check that all required files exist
+>       assert compressed_path.exists(), f"Compressed file {compressed_path} does not exist"
+E       AssertionError: Compressed file /app/data.comp does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/app/data.comp').exists
+
+/tests/test_outputs.py:34: AssertionError
+____________________________________________________________________ test_compression_size _____________________________________________________________________
+
+    def test_compression_size():
+        """Test that the compressed file size meets requirements."""
+        setup()
+        max_size_bytes = 2500  # As specified in task.yaml
+
+        compressed_path = Path("/app/data.comp")
+>       assert compressed_path.exists(), f"Compressed file {compressed_path} does not exist"
+E       AssertionError: Compressed file /app/data.comp does not exist
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('/app/data.comp').exists
+
+/tests/test_outputs.py:66: AssertionError
+=================================================================== short test summary info ====================================================================
+FAILED ../tests/test_outputs.py::test_compressed_file_exists - AssertionError: File /app/data.comp does not exist
+FAILED ../tests/test_outputs.py::test_decompression_produces_original - AssertionError: Compressed file /app/data.comp does not exist
+FAILED ../tests/test_outputs.py::test_compression_size - AssertionError: Compressed file /app/data.comp does not exist
+====================================================================== 3 failed in 0.19s =======================================================================
+root@rack-ge107-ya-20250517193277:/app#

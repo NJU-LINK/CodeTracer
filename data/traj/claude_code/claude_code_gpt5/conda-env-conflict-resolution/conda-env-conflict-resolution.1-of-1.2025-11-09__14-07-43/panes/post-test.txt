@@ -1,0 +1,90 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Collecting pytest
+  Downloading pytest-9.0.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=22 (from pytest)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Downloading pytest-9.0.0-py3-none-any.whl (373 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 5.4 MB/s eta 0:00:00
+Installing collected packages: pygments, pluggy, packaging, iniconfig, pytest
+Successfully installed iniconfig-2.3.0 packaging-25.0 pluggy-1.6.0 pygments-2.19.2 pytest-9.0.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your syst
+em unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you ar
+e doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.3.1 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0 -- /usr/local/bin/python3.13
+cachedir: .pytest_cache
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py::test_environment_exists PASSED                                                                                                 [ 33%]
+../tests/test_outputs.py::test_environment_yml_modified PASSED                                                                                           [ 66%]
+../tests/test_outputs.py::test_imports_script_runs FAILED                                                                                                [100%]
+
+=========================================================================== FAILURES ===========================================================================
+___________________________________________________________________ test_imports_script_runs ___________________________________________________________________
+
+    def test_imports_script_runs():
+        """Test that the test_imports.py script can run successfully."""
+        # First ensure we're in the datasci environment
+        test_dir = os.environ["TEST_DIR"]
+        print("Contents of test directory:")
+        result = subprocess.run(["ls", "-la", test_dir], capture_output=True, text=True)
+        print(result.stdout)
+        result = subprocess.run(
+            ["conda", "run", "-n", "datasci", "python", f"{test_dir}/test_imports.py"],
+            capture_output=True,
+            text=True,
+        )
+
+        # Check for successful execution
+>       assert result.returncode == 0, f"test_imports.py failed with error: {result.stderr}"
+E       AssertionError: test_imports.py failed with error: Traceback (most recent call last):
+E           File "/tests/test_imports.py", line 53, in <module>
+E             test_environment()
+E           File "/tests/test_imports.py", line 34, in test_environment
+E             import tensorflow as tf
+E         ModuleNotFoundError: No module named 'tensorflow'
+E
+E         ERROR conda.cli.main_run:execute(125): `conda run python /tests/test_imports.py` failed. (See above for error)
+E
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['conda', 'run', '-n', 'datasci', 'python', '/tests/test_imports.py'], returncode=1, stdout='Testing imports for all
+ required packages...\nTesting numpy...\nNumPy version: 1.23.1\nTesting scipy...\nSciPy version: 1.9.0\nTesting pandas...\nPandas version: 1.4.0\nTesting scikit
+-learn...\nScikit-learn version: 1.0.2\nTesting TensorFlow...\n\n', stderr='Traceback (most recent call last):\n  File "/tests/test_imports.py", line 53, in <mo
+dule>\n    test_environment()\n  File "/tests/test_imports.py", line 34, in test_environment\n    import tensorflow as tf\nModuleNotFoundError: No module named
+\'tensorflow\'\n\nERROR conda.cli.main_run:execute(125): `conda run python /tests/test_imports.py` failed. (See above for error)\n').returncode
+
+/tests/test_outputs.py:59: AssertionError
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+Contents of test directory:
+total 32
+drwxr-xr-x  3 root root 4096 Nov  9 15:00 .
+drwxr-xr-x 15 root root 4096 Nov  9 15:00 ..
+drwxr-xr-x  2 root root  148 Nov  9 15:00 __pycache__
+-rw-r--r--  1 root root  273 Oct 25 18:11 run-tests.sh
+-rw-r--r--  1 root root   58 Oct 25 18:11 run-uv-pytest.sh
+-rw-r--r--  1 root root  583 Oct 25 18:11 setup-uv-pytest.sh
+-rw-r--r--  1 root root  380 Oct 25 18:11 setup-uv-pytest.sh.backup
+-rw-r--r--  1 root root 1203 Oct 25 18:11 test_imports.py
+-rw-r--r--  1 root root 2856 Oct 25 18:11 test_outputs.py
+
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_environment_exists
+PASSED ../tests/test_outputs.py::test_environment_yml_modified
+FAILED ../tests/test_outputs.py::test_imports_script_runs - AssertionError: test_imports.py failed with error: Traceback (most recent call last):
+================================================================= 1 failed, 2 passed in 3.17s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

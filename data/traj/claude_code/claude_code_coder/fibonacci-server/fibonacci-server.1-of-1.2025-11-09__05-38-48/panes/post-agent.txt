@@ -1,0 +1,1932 @@
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_ccec71] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 490ms
+[log_ccec71] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:17 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 490
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:17 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_ccec71] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 490
+}
+[log_562712] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 734ms
+[log_562712] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:17 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 734
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:17 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_562712] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 734
+}
+{"type":"assistant","message":{"id":"msg_58f5fa86a8034fe48907f4a4","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Great! Node.js is available. Now I'll create a simple Express server that implements the Fibonacci endpoint.\n\n"}],"stop_reason":null,
+"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"sessio
+n_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"e0763fbb-aa2e-484f-893c-7e49d4a0570b"}
+{"type":"assistant","message":{"id":"msg_58f5fa86a8034fe48907f4a4","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_1a0bf8b27a834360844376cb","name":"Write","input":{"file_path":"/app/server.js","content":"const express = require('express');\nc
+onst app = express();\nconst port = 3000;\n\n// Function to calculate nth Fibonacci number\nfunction fibonacci(n) {\n  if (n <= 1) return n;\n  let a = 0, b = 1
+;\n  for (let i = 2; i <= n; i++) {\n    const temp = a + b;\n    a = b;\n    b = temp;\n  }\n  return b;\n}\n\n// GET endpoint for /fib\napp.get('/fib', (req,
+res) => {\n  const { n } = req.query;\n\n  // Check if n is provided\n  if (n === undefined) {\n    return res.status(400).json({ error: 'Missing query paramete
+r: n' });\n  }\n\n  // Check if n is an integer\n  const num = parseInt(n);\n  if (isNaN(num) || num.toString() !== n) {\n    return res.status(400).json({ erro
+r: 'Query parameter n must be an integer' });\n  }\n\n  // Calculate and return the Fibonacci number\n  const result = fibonacci(num);\n  res.json({ result });\
+n});\n\napp.listen(port, () => {\n  console.log(`Server running at http://localhost:${port}`);\n});"}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_
+tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c45
+7690ca","uuid":"002a3acc-20d5-47af-af3a-710b46827864"}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_1a0bf8b27a834360844376cb","type":"tool_result","content":"File created successfully at:
+/app/server.js"}]},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"0e5ef1e6-e77a-464a-a977-3d908285f63b"}
+[log_142f77] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_142f77] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 836ms
+[log_142f77] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:22 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 836
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:22 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_142f77] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 837
+}
+{"type":"assistant","message":{"id":"msg_5ff6601a97b246b38bdff867","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Now I'll create a package.json file to manage the dependencies:\n\n"}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":
+0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca",
+"uuid":"7f17d059-ed7c-40f1-9687-058eb355b87d"}
+{"type":"assistant","message":{"id":"msg_5ff6601a97b246b38bdff867","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_4328bdffec09409886012a11","name":"Write","input":{"file_path":"/app/package.json","content":"{\n  \"name\": \"fibonacci-server\"
+,\n  \"version\": \"1.0.0\",\n  \"description\": \"A simple server that calculates Fibonacci numbers\",\n  \"main\": \"server.js\",\n  \"scripts\": {\n    \"sta
+rt\": \"node server.js\"\n  },\n  \"dependencies\": {\n    \"express\": \"^4.18.2\"\n  },\n  \"keywords\": [\"fibonacci\", \"server\", \"express\"],\n  \"author
+\": \"Claude Code\",\n  \"license\": \"MIT\"\n}"}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_rea
+d_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"3c58bfc6-63a3-42b9-90d4-07c0633685e9
+"}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_4328bdffec09409886012a11","type":"tool_result","content":"File created successfully at:
+/app/package.json"}]},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"8d830133-e779-4424-85c0-a82a99f4deec"}
+[log_b895a8] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_b895a8] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 787ms
+[log_b895a8] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:25 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 787
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:25 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_b895a8] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 788
+}
+{"type":"assistant","message":{"id":"msg_164a11d9575a40a09e0b0424","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Now I'll install the required dependencies:\n\n"}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_in
+put_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"57e0bc45-cea
+6-412b-93d0-a4c55f87ef2c"}
+{"type":"assistant","message":{"id":"msg_164a11d9575a40a09e0b0424","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_62ec54424d074b65b7f4a231","name":"Bash","input":{"command":"npm install","description":"Install project dependencies"}}],"stop_r
+eason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":
+null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"c1d13140-50ff-4301-a286-a5938635d043"}
+[log_e24fc0] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_e24fc0] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 466ms
+[log_e24fc0] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:27 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 466
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:27 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_e24fc0] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 466
+}
+[log_29c58a] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_62ec54424d074b65b7f4a231","type":"tool_result","content":"added 69 packages, and audited
+ 70 packages in 5s\n\n14 packages are looking for funding\n  run `npm fund` for details\n\nfound 0 vulnerabilities","is_error":false}]},"parent_tool_use_id":nul
+l,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"e55abee9-0361-4715-80ca-972fa6fa700b"}
+[log_aa32ac] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_29c58a] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 509ms
+[log_29c58a] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:33 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 509
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:33 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_29c58a] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 509
+}
+[log_aa32ac] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 1053ms
+[log_aa32ac] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:33 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 1053
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:33 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_aa32ac] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 1053
+}
+{"type":"assistant","message":{"id":"msg_6964f80b3f7a48a1b8313592","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Now let's start the server:\n\n"}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"c
+ache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"4f3372df-2ed2-4ccf-b082-1c03
+df905f30"}
+{"type":"assistant","message":{"id":"msg_6964f80b3f7a48a1b8313592","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_8616fe9be07141e8b5a6a7a1","name":"Bash","input":{"command":"node server.js","description":"Start the Fibonacci server","run_in_b
+ackground":true}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens"
+:0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"2a27bf73-9193-427a-83d8-3ac9ac173fc6"}
+[log_a4b012] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_a4b012] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 612ms
+[log_a4b012] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:34 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 612
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:34 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_a4b012] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 612
+}
+[log_fe14a0] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_8616fe9be07141e8b5a6a7a1","type":"tool_result","content":"Command running in background
+with ID: ba509c","is_error":false}]},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"59f56d01-b316-4627-814a-bf821cc334be"
+}
+[log_a41828] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_fe14a0] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 379ms
+[log_fe14a0] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:35 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 379
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:35 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_fe14a0] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 380
+}
+[log_a41828] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 726ms
+[log_a41828] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:35 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 726
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:35 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_a41828] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 726
+}
+{"type":"assistant","message":{"id":"msg_11b40df5165e4fdc856a2e9d","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Let me wait a moment for the server to start and then test the endpoint:\n\n"}],"stop_reason":null,"stop_sequence":null,"usage":{"input
+_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c4
+57690ca","uuid":"da4c073a-79db-4fe3-9bf3-092449789516"}
+{"type":"assistant","message":{"id":"msg_11b40df5165e4fdc856a2e9d","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_3c170e3c6bbc4965bf37e6a6","name":"BashOutput","input":{"bash_id":"ba509c"}}],"stop_reason":null,"stop_sequence":null,"usage":{"i
+nput_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-d
+f0c457690ca","uuid":"8922d854-14be-4f2e-9b01-3941375fb167"}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_3c170e3c6bbc4965bf37e6a6","type":"tool_result","content":"<status>running</status>\n\n<s
+tdout>\nServer running at http://localhost:3000\n</stdout>\n\n<timestamp>2025-11-09T07:08:37.522Z</timestamp>"}]},"parent_tool_use_id":null,"session_id":"f5a8da
+57-b788-4ff3-a48b-df0c457690ca","uuid":"2891a429-b5ee-47c1-a629-b6f56deb4e36"}
+[log_32f100] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_32f100] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 984ms
+[log_32f100] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:37 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 984
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:37 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_32f100] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 985
+}
+{"type":"assistant","message":{"id":"msg_ee6489060c214cf38d329ca1","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Great! The server is running. Now let me test the endpoint with a few different scenarios:\n\n"}],"stop_reason":null,"stop_sequence":nu
+ll,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b7
+88-4ff3-a48b-df0c457690ca","uuid":"74593afc-ea14-478f-8f15-07e7c8821d3d"}
+{"type":"assistant","message":{"id":"msg_ee6489060c214cf38d329ca1","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_65e565f2da5f49478f143504","name":"Bash","input":{"command":"curl -i \"http://localhost:3000/fib?n=10\"","description":"Test the
+Fibonacci endpoint with n=10"}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"
+output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"2f2a596e-ab08-4ec7-9e7e-ce7ee94c449f"}
+[log_79b460] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_79b460] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 551ms
+[log_79b460] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:39 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 551
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:39 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_79b460] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 551
+}
+[log_d3075f] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_65e565f2da5f49478f143504","type":"tool_result","content":"HTTP/1.1 200 OK\r\nX-Powered-B
+y: Express\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 13\r\nETag: W/\"d-waAab1PFGJBLiSKkKjX1ia5D6kk\"\r\nDate: Sun, 09 Nov 2025 07:08:4
+0 GMT\r\nConnection: keep-alive\r\nKeep-Alive: timeout=5\r\n\r\n{\"result\":55}\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--
+0\r100    13  100    13    0     0   1853      0 --:--:-- --:--:-- --:--:--  2166","is_error":false}]},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff
+3-a48b-df0c457690ca","uuid":"984cd40a-7b20-4bb7-b93c-ae45de258e20"}
+[log_cd6ee4] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_d3075f] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 538ms
+[log_d3075f] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:39 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 538
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:39 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_d3075f] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 539
+}
+[log_cd6ee4] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 1187ms
+[log_cd6ee4] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:39 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 1187
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:39 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_cd6ee4] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 1187
+}
+{"type":"assistant","message":{"id":"msg_7c3a60cf2fef4b18b7b5d8d2","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Let me test the error cases as well:\n\n"}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tok
+ens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"28265f29-4d1a-4af0-
+9a31-929ee06829d1"}
+{"type":"assistant","message":{"id":"msg_7c3a60cf2fef4b18b7b5d8d2","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_4f6c040a6c9d49a9b7912265","name":"Bash","input":{"command":"curl -i \"http://localhost:3000/fib\"","description":"Test the Fibon
+acci endpoint without query parameter"}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_to
+kens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"5dddafcf-84d6-4397-ac66-11be1af793f4"}
+[log_0efd61] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_0efd61] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 501ms
+[log_0efd61] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:41 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 501
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:41 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_0efd61] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 501
+}
+[log_297353] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_4f6c040a6c9d49a9b7912265","type":"tool_result","content":"HTTP/1.1 400 Bad Request\r\nX-
+Powered-By: Express\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 38\r\nETag: W/\"26-J0WhkUrnlDYajm9Fv4/uTCW0VAk\"\r\nDate: Sun, 09 Nov 20
+25 07:08:42 GMT\r\nConnection: keep-alive\r\nKeep-Alive: timeout=5\r\n\r\n{\"error\":\"Missing query parameter: n\"}\n  % Total    % Received % Xferd  Average S
+peed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0
+    0 --:--:-- --:--:-- --:--:--     0\r100    38  100    38    0     0  25797      0 --:--:-- --:--:-- --:--:-- 38000","is_error":false}]},"parent_tool_use_id"
+:null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"f6ae6d3f-2404-4306-afaf-c2b2e2e9e7e9"}
+[log_553035] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_297353] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 554ms
+[log_297353] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:42 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 554
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:42 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_297353] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 554
+}
+[log_553035] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 725ms
+[log_553035] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:42 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 725
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:42 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_553035] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 726
+}
+{"type":"assistant","message":{"id":"msg_c93562a64c47468cb4fe27a2","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Let me test with a non-integer value:\n\n"}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_to
+kens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"75fda1e5-cf64-48b0
+-8403-3fe9ad44bb0d"}
+{"type":"assistant","message":{"id":"msg_c93562a64c47468cb4fe27a2","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_7be42b8fc4054089b09fb090","name":"Bash","input":{"command":"curl -i \"http://localhost:3000/fib?n=abc\"","description":"Test the
+ Fibonacci endpoint with non-integer query parameter"}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cach
+e_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"2cf26c17-34bd-4971-9f08-67d84e1
+aa770"}
+[log_8e1607] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_8e1607] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 458ms
+[log_8e1607] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:43 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 458
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:43 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_8e1607] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 458
+}
+[log_fe6392] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_7be42b8fc4054089b09fb090","type":"tool_result","content":"HTTP/1.1 400 Bad Request\r\nX-
+Powered-By: Express\r\nContent-Type: application/json; charset=utf-8\r\nContent-Length: 48\r\nETag: W/\"30-fanzZYhnAmjC9YqM8G9i5sbasQA\"\r\nDate: Sun, 09 Nov 20
+25 07:08:44 GMT\r\nConnection: keep-alive\r\nKeep-Alive: timeout=5\r\n\r\n{\"error\":\"Query parameter n must be an integer\"}\n  % Total    % Received % Xferd
+ Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0
+0      0      0 --:--:-- --:--:-- --:--:--     0\r100    48  100    48    0     0  22727      0 --:--:-- --:--:-- --:--:-- 24000","is_error":false}]},"parent_to
+ol_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"89b35b22-a238-4297-a11a-4ecc6130a42f"}
+[log_d0695b] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_fe6392] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 546ms
+[log_fe6392] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:44 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 546
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:44 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_fe6392] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 547
+}
+[log_d0695b] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 901ms
+[log_d0695b] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:44 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 901
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:44 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_d0695b] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 901
+}
+{"type":"assistant","message":{"id":"msg_ee50e8b1c0c74fbe87d019e4","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Perfect! Let me also test with a few more valid values to make sure everything is working correctly:\n\n"}],"stop_reason":null,"stop_se
+quence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f
+5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"81c0b1bc-cf87-41fe-9091-ae21140f28b6"}
+{"type":"assistant","message":{"id":"msg_ee50e8b1c0c74fbe87d019e4","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"tool_use","id":"call_b5ef767c516c4034b0e18f38","name":"Bash","input":{"command":"curl -s \"http://localhost:3000/fib?n=0\" && echo \"\" && curl -s \"
+http://localhost:3000/fib?n=1\" && echo \"\" && curl -s \"http://localhost:3000/fib?n=15\"","description":"Test the Fibonacci endpoint with several valid inputs
+"}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_t
+ool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"6d98cb1e-a668-4128-9456-413c14e58db0"}
+[log_1dd435] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_e670ae] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_4c36b1] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_7c1e2f] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_f1f203] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_e670ae] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 460ms
+[log_e670ae] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 460
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_e670ae] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 461
+}
+[log_1dd435] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 483ms
+[log_1dd435] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 483
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_1dd435] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 483
+}
+[log_7c1e2f] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 555ms
+[log_7c1e2f] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 555
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_7c1e2f] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 555
+}
+[log_4c36b1] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 808ms
+[log_4c36b1] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 808
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_4c36b1] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 808
+}
+[log_f1f203] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 927ms
+[log_f1f203] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 927
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:49 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_f1f203] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 928
+}
+[log_340da9] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'claude-haiku-4-5-20251001',
+      messages: [Array],
+      system: [Array],
+      tools: [],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+{"type":"user","message":{"role":"user","content":[{"tool_use_id":"call_b5ef767c516c4034b0e18f38","type":"tool_result","content":"{\"result\":0}\n{\"result\":1}
+\n{\"result\":610}","is_error":false}]},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","uuid":"a5a0ed76-183a-4f44-b5f8-f9a6dd3440
+6b"}
+[log_f5d770] sending request {
+  method: 'post',
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  options: {
+    method: 'post',
+    path: '/v1/messages?beta=true',
+    body: {
+      model: 'openai/app-dsw4xd-1757654301803448727',
+      messages: [Array],
+      system: [Array],
+      tools: [Array],
+      tool_choice: undefined,
+      metadata: [Object],
+      max_tokens: 32000,
+      thinking: undefined,
+      stream: true
+    },
+    timeout: 600000,
+    signal: AbortSignal { aborted: false },
+    stream: true
+  },
+  headers: {
+    accept: 'application/json',
+    'anthropic-beta': 'claude-code-20250219,interleaved-thinking-2025-05-14,fine-grained-tool-streaming-2025-05-14',
+    'anthropic-dangerous-direct-browser-access': 'true',
+    'anthropic-version': '2023-06-01',
+    authorization: '***',
+    'content-type': 'application/json',
+    'user-agent': 'claude-cli/2.0.29 (external, sdk-cli)',
+    'x-api-key': '***',
+    'x-app': 'cli',
+    'x-stainless-arch': 'x64',
+    'x-stainless-helper-method': 'stream',
+    'x-stainless-lang': 'js',
+    'x-stainless-os': 'Linux',
+    'x-stainless-package-version': '0.60.0',
+    'x-stainless-retry-count': '0',
+    'x-stainless-runtime': 'node',
+    'x-stainless-runtime-version': 'v20.19.4',
+    'x-stainless-timeout': '600'
+  }
+}
+[log_340da9] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 373ms
+[log_340da9] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:50 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 373
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:50 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_340da9] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 374
+}
+[log_f5d770] post http://localhost:41713/v1/messages?beta=true succeeded with status 200 in 840ms
+[log_f5d770] response start {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  headers: {
+    'content-type': 'text/event-stream; charset=utf-8',
+    date: 'Sun, 09 Nov 2025 07:08:50 GMT',
+    server: 'uvicorn',
+    'transfer-encoding': 'chunked'
+  },
+  durationMs: 840
+}
+response 200 http://localhost:41713/v1/messages?beta=true Headers {
+  date: 'Sun, 09 Nov 2025 07:08:50 GMT',
+  server: 'uvicorn',
+  'content-type': 'text/event-stream; charset=utf-8',
+  'transfer-encoding': 'chunked'
+} ReadableStream { locked: false, state: 'readable', supportsBYOB: true }
+[log_f5d770] response parsed {
+  url: 'http://localhost:41713/v1/messages?beta=true',
+  status: 200,
+  body: mK {
+    iterator: [AsyncGeneratorFunction: Z],
+    controller: AbortController { signal: AbortSignal { aborted: false } }
+  },
+  durationMs: 840
+}
+{"type":"assistant","message":{"id":"msg_677fda1a109c42c1a1a9aef8","type":"message","role":"assistant","model":"openai/app-dsw4xd-1757654301803448727","content"
+:[{"type":"text","text":"Excellent! The server is working correctly. Let me summarize what we've created:\n\n## Summary\n\nI've created and deployed a Node.js E
+xpress server that meets all your requirements:\n\n1. **Server Configuration**:\n   - Runs on port 3000\n   - Has a single GET endpoint at `/fib`\n\n2. **Endpoi
+nt Functionality**:\n   - Accepts a query parameter `n` \n   - Returns the nth Fibonacci number in JSON format with the key `result`\n   - Properly handles erro
+r cases:\n     - Returns 400 Bad Request if `n` is not provided\n     - Returns 400 Bad Request if `n` is not an integer\n\n3. **Implementation Details**:\n   -
+ Uses an efficient iterative approach to calculate Fibonacci numbers\n   - Properly validates input parameters\n   - Returns appropriate HTTP status codes and e
+rror messages\n\n4. **Testing Results**:\n   - Valid requests (e.g., `/fib?n=10`) return the correct Fibonacci number (55)\n   - Missing parameter requests (`/f
+ib`) return 400 with error message\n   - Non-integer parameter requests (`/fib?n=abc`) return 400 with error message\n\nThe server is currently running in the b
+ackground. You can test it yourself with curl commands like:\n- `curl \"http://localhost:3000/fib?n=10\"` (should return {\"result\":55})\n- `curl \"http://loca
+lhost:3000/fib\"` (should return 400 error)\n- `curl \"http://localhost:3000/fib?n=abc\"` (should return 400 error)"}],"stop_reason":null,"stop_sequence":null,"
+usage":{"input_tokens":0,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0}},"parent_tool_use_id":null,"session_id":"f5a8da57-b788-4
+ff3-a48b-df0c457690ca","uuid":"90f0f696-edb3-464a-999f-5ba2355aa08a"}
+{"type":"result","subtype":"success","is_error":false,"duration_ms":48648,"duration_api_ms":46400,"num_turns":37,"result":"Excellent! The server is working corr
+ectly. Let me summarize what we've created:\n\n## Summary\n\nI've created and deployed a Node.js Express server that meets all your requirements:\n\n1. **Server
+ Configuration**:\n   - Runs on port 3000\n   - Has a single GET endpoint at `/fib`\n\n2. **Endpoint Functionality**:\n   - Accepts a query parameter `n` \n   -
+ Returns the nth Fibonacci number in JSON format with the key `result`\n   - Properly handles error cases:\n     - Returns 400 Bad Request if `n` is not provide
+d\n     - Returns 400 Bad Request if `n` is not an integer\n\n3. **Implementation Details**:\n   - Uses an efficient iterative approach to calculate Fibonacci n
+umbers\n   - Properly validates input parameters\n   - Returns appropriate HTTP status codes and error messages\n\n4. **Testing Results**:\n   - Valid requests
+(e.g., `/fib?n=10`) return the correct Fibonacci number (55)\n   - Missing parameter requests (`/fib`) return 400 with error message\n   - Non-integer parameter
+ requests (`/fib?n=abc`) return 400 with error message\n\nThe server is currently running in the background. You can test it yourself with curl commands like:\n
+- `curl \"http://localhost:3000/fib?n=10\"` (should return {\"result\":55})\n- `curl \"http://localhost:3000/fib\"` (should return 400 error)\n- `curl \"http://
+localhost:3000/fib?n=abc\"` (should return 400 error)","session_id":"f5a8da57-b788-4ff3-a48b-df0c457690ca","total_cost_usd":0,"usage":{"input_tokens":0,"cache_c
+reation_input_tokens":0,"cache_read_input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0},"service_tier":"standard","cache_creation":{"e
+phemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0}},"modelUsage":{"claude-haiku-4-5-20251001":{"inputTokens":0,"outputTokens":0,"cacheReadInputTokens":0
+,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0,"contextWindow":200000},"openai/app-dsw4xd-1757654301803448727":{"inputTokens":0,"outputTokens":
+0,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0,"contextWindow":200000},"claude-sonnet-4-5-20250929":{"inputTokens":0,
+"outputTokens":0,"cacheReadInputTokens":0,"cacheCreationInputTokens":0,"webSearchRequests":0,"costUSD":0,"contextWindow":200000}},"permission_denials":[],"uuid"
+:"7863ff54-f359-4d23-8e2e-574b8539e1b1"}
+root@rack-ge107-ya-20250517193277:/app#

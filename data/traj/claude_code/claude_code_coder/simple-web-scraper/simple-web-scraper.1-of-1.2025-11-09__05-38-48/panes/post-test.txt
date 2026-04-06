@@ -1,0 +1,90 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Collecting pytest
+  Downloading pytest-9.0.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=22 (from pytest)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Downloading pytest-9.0.0-py3-none-any.whl (373 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 5.5 MB/s eta 0:00:00
+Installing collected packages: pygments, pluggy, packaging, iniconfig, pytest
+Successfully installed iniconfig-2.3.0 packaging-25.0 pluggy-1.6.0 pygments-2.19.2 pytest-9.0.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your syst
+em unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you ar
+e doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.3.1 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 5 items
+
+../tests/test_outputs.py ..FFF                                                                                                                           [100%]
+
+=========================================================================== FAILURES ===========================================================================
+____________________________________________________________________ test_data_completeness ____________________________________________________________________
+
+    def test_data_completeness():
+        """Test that all books were scraped"""
+        df = pd.read_csv("/app/books.csv")
+
+        # Should have scraped 7 books total
+>       assert len(df) == 7, f"Expected 7 books, got {len(df)}"
+E       AssertionError: Expected 7 books, got 4
+E       assert 4 == 7
+E        +  where 4 = len(                   title               author  year  rating  price\n0       The Great Gatsby  F. Scott Fitzgerald  1925...      1984
+      George Orwell  1949     4.7  13.25\n3    Pride and Prejudice          Jane Austen  1813     4.6  11.75)
+
+/tests/test_outputs.py:35: AssertionError
+______________________________________________________________________ test_data_accuracy ______________________________________________________________________
+
+    def test_data_accuracy():
+        """Test the accuracy of scraped data"""
+        df = pd.read_csv("/app/books.csv")
+
+        # Check specific book details
+        gatsby = df[df["title"] == "The Great Gatsby"].iloc[0]
+        assert gatsby["author"] == "F. Scott Fitzgerald", (
+            "Author should be F. Scott Fitzgerald"
+        )
+        assert gatsby["year"] == 1925, "Year should be 1925"
+>       assert gatsby["rating"] == 4.2, "Rating should be 4.2"
+E       AssertionError: Rating should be 4.2
+E       assert np.float64(4.5) == 4.2
+
+/tests/test_outputs.py:62: AssertionError
+______________________________________________________________________ test_report_exists ______________________________________________________________________
+
+    def test_report_exists():
+        """Test that the summary report was created"""
+        report_path = Path("/app/report.txt")
+        assert report_path.exists(), "Summary report file should exist"
+
+        # Read the summary report
+        report_content = report_path.read_text()
+
+        # Check for required information
+>       assert "7" in report_content, "Report should show correct book count"
+E       AssertionError: Report should show correct book count
+E       assert '7' in 'Book Scraping Report\n=================\n\nTotal number of books scraped: 4\nAverage book price: $13.12\nHighest rated book: To Kill a Mo
+ckingbird by Harper Lee (Rating: 4.8/5)\n'
+
+/tests/test_outputs.py:81: AssertionError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_csv_file_exists
+PASSED ../tests/test_outputs.py::test_csv_structure
+FAILED ../tests/test_outputs.py::test_data_completeness - AssertionError: Expected 7 books, got 4
+FAILED ../tests/test_outputs.py::test_data_accuracy - AssertionError: Rating should be 4.2
+FAILED ../tests/test_outputs.py::test_report_exists - AssertionError: Report should show correct book count
+================================================================= 3 failed, 2 passed in 0.36s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

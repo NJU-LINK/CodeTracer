@@ -1,0 +1,152 @@
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 35 not upgraded.
+downloading uv 0.9.5 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Downloading pygments (1.2MiB)
+Downloading setuptools (1.2MiB)
+Downloading numpy (15.9MiB)
+ Downloading pygments
+ Downloading setuptools
+ Downloading numpy
+Installed 8 packages in 52ms
+============================= test session starts ==============================
+platform linux -- Python 3.13.7, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: json-ctrf-0.3.5
+collected 6 items
+
+../tests/test_outputs.py F.FFFF                                          [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_c_extension_exists ____________________________
+
+    def test_c_extension_exists():
+        """Verify that a compiled C extension actually exists"""
+        try:
+            # Try to import the C extension module
+            sys.path.append("/app")
+>           import portfolio_optimized_c
+E           ModuleNotFoundError: No module named 'portfolio_optimized_c'
+
+/tests/test_outputs.py:39: ModuleNotFoundError
+
+During handling of the above exception, another exception occurred:
+
+    def test_c_extension_exists():
+        """Verify that a compiled C extension actually exists"""
+        try:
+            # Try to import the C extension module
+            sys.path.append("/app")
+            import portfolio_optimized_c
+    
+            # Check that it's actually a compiled extension, not pure Python
+            module_file = portfolio_optimized_c.__file__
+            assert module_file is not None, "C extension module has no file attribute"
+    
+            # Compiled extensions typically end with .so, .pyd, or similar
+            assert not module_file.endswith(".py"), (
+                f"Expected compiled C extension, but got Python file: {module_file}"
+            )
+            assert any(module_file.endswith(ext) for ext in [".so", ".pyd", ".dll"]), (
+                f"Module doesn't appear to be a compiled extension: {module_file}"
+            )
+    
+            # Verify the required functions exist
+            assert hasattr(portfolio_optimized_c, "portfolio_risk_c"), (
+                "Missing portfolio_risk_c function"
+            )
+            assert hasattr(portfolio_optimized_c, "portfolio_return_c"), (
+                "Missing portfolio_return_c function"
+            )
+    
+        except ImportError as e:
+>           pytest.fail(
+                f"C extension module not found. Did you run "
+                f"'python setup.py build_ext --inplace'? Error: {e}"
+            )
+E           Failed: C extension module not found. Did you run 'python setup.py build_ext --inplace'? Error: No module named 'portfolio_optimized_c'
+
+/tests/test_outputs.py:62: Failed
+____________________________ test_correctness_small ____________________________
+
+    def test_correctness_small():
+        """Test correctness on small portfolio"""
+        # Import from wrapper, which should use the C extension
+        sys.path.append("/app")
+>       from portfolio_optimized import portfolio_return_c, portfolio_risk_c
+E         File "/app/portfolio_optimized.py", line 1
+E           , py'
+E               ^
+E       SyntaxError: unterminated string literal (detected at line 1)
+
+/tests/test_outputs.py:85: SyntaxError
+____________________ test_performance_and_scalability[5000] ____________________
+
+n = 5000
+
+    @pytest.mark.parametrize("n", [5000, 6000, 8000])
+    def test_performance_and_scalability(n):
+        """Test performance and scalability requirements for large portfolios"""
+        sys.path.append("/app")
+>       from portfolio_optimized import portfolio_return_c, portfolio_risk_c
+E         File "/app/portfolio_optimized.py", line 1
+E           , py'
+E               ^
+E       SyntaxError: unterminated string literal (detected at line 1)
+
+/tests/test_outputs.py:109: SyntaxError
+____________________ test_performance_and_scalability[6000] ____________________
+
+n = 6000
+
+    @pytest.mark.parametrize("n", [5000, 6000, 8000])
+    def test_performance_and_scalability(n):
+        """Test performance and scalability requirements for large portfolios"""
+        sys.path.append("/app")
+>       from portfolio_optimized import portfolio_return_c, portfolio_risk_c
+E         File "/app/portfolio_optimized.py", line 1
+E           , py'
+E               ^
+E       SyntaxError: unterminated string literal (detected at line 1)
+
+/tests/test_outputs.py:109: SyntaxError
+____________________ test_performance_and_scalability[8000] ____________________
+
+n = 8000
+
+    @pytest.mark.parametrize("n", [5000, 6000, 8000])
+    def test_performance_and_scalability(n):
+        """Test performance and scalability requirements for large portfolios"""
+        sys.path.append("/app")
+>       from portfolio_optimized import portfolio_return_c, portfolio_risk_c
+E         File "/app/portfolio_optimized.py", line 1
+E           , py'
+E               ^
+E       SyntaxError: unterminated string literal (detected at line 1)
+
+/tests/test_outputs.py:109: SyntaxError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../tests/test_outputs.py::test_baseline_functionality
+FAILED ../tests/test_outputs.py::test_c_extension_exists - Failed: C extensio...
+FAILED ../tests/test_outputs.py::test_correctness_small -   File "/app/portfo...
+FAILED ../tests/test_outputs.py::test_performance_and_scalability[5000] -   F...
+FAILED ../tests/test_outputs.py::test_performance_and_scalability[6000] -   F...
+FAILED ../tests/test_outputs.py::test_performance_and_scalability[8000] -   F...
+========================= 5 failed, 1 passed in 0.07s ==========================

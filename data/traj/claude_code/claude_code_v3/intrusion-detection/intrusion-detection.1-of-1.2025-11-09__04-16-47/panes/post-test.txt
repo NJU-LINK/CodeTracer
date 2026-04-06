@@ -1,0 +1,509 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.25s
+Prepared 5 packages in 961ms
+Installed 5 packages in 58ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 7 items
+
+../tests/test_outputs.py FFFFFFF                                                                                                                         [100%]
+
+=========================================================================== FAILURES ===========================================================================
+________________________________________________________________ test_intrusion_detector_exists ________________________________________________________________
+
+    def test_intrusion_detector_exists():
+        """Test that intrusion_detector.sh exists and is executable."""
+
+>       assert os.path.exists("/app/intrusion_detector.sh"), (
+            "intrusion_detector.sh script does not exist"
+        )
+E       AssertionError: intrusion_detector.sh script does not exist
+E       assert False
+E        +  where False = <function exists at 0x7fae6e8e7240>('/app/intrusion_detector.sh')
+E        +    where <function exists at 0x7fae6e8e7240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:13: AssertionError
+_________________________________________________________________ test_response_script_exists __________________________________________________________________
+
+    def test_response_script_exists():
+        """Test that response.sh exists and is executable."""
+>       assert os.path.exists("/app/response.sh"), "response.sh script does not exist"
+E       AssertionError: response.sh script does not exist
+E       assert False
+E        +  where False = <function exists at 0x7fae6e8e7240>('/app/response.sh')
+E        +    where <function exists at 0x7fae6e8e7240> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:23: AssertionError
+_______________________________________________________________ test_intrusion_detector_content ________________________________________________________________
+
+    def test_intrusion_detector_content():
+        """Test the content of the intrusion_detector.sh script."""
+>       with open("/app/intrusion_detector.sh", "r") as f:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/intrusion_detector.sh'
+
+/tests/test_outputs.py:29: FileNotFoundError
+______________________________________________________________ test_intrusion_detector_execution _______________________________________________________________
+
+    def test_intrusion_detector_execution():
+        """Test that the intrusion detector executes and creates output."""
+        try:
+>           subprocess.run(["/app/intrusion_detector.sh"], check=True, timeout=10)
+
+/tests/test_outputs.py:45:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/local/lib/python3.13/subprocess.py:554: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.13/subprocess.py:1036: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+/usr/local/lib/python3.13/subprocess.py:1851: in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: None args: ['/app/intrusion_detector.sh']>, args = ['/app/intrusion_detector.sh'], executable = '/app/intrusion_detector.sh'
+env = None, restore_signals = True, close_fds = True, p2cread = -1, p2cwrite = -1, c2pread = -1, c2pwrite = -1, errread = -1, errwrite = -1
+
+    def _posix_spawn(self, args, executable, env, restore_signals, close_fds,
+                     p2cread, p2cwrite,
+                     c2pread, c2pwrite,
+                     errread, errwrite):
+        """Execute program using os.posix_spawn()."""
+        kwargs = {}
+        if restore_signals:
+            # See _Py_RestoreSignals() in Python/pylifecycle.c
+            sigset = []
+            for signame in ('SIGPIPE', 'SIGXFZ', 'SIGXFSZ'):
+                signum = getattr(signal, signame, None)
+                if signum is not None:
+                    sigset.append(signum)
+            kwargs['setsigdef'] = sigset
+
+        file_actions = []
+        for fd in (p2cwrite, c2pread, errread):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_CLOSE, fd))
+        for fd, fd2 in (
+            (p2cread, 0),
+            (c2pwrite, 1),
+            (errwrite, 2),
+        ):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_DUP2, fd, fd2))
+
+        if close_fds:
+            file_actions.append((os.POSIX_SPAWN_CLOSEFROM, 3))
+
+        if file_actions:
+            kwargs['file_actions'] = file_actions
+
+>       self.pid = os.posix_spawn(executable, args, env, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/intrusion_detector.sh'
+
+/usr/local/lib/python3.13/subprocess.py:1795: FileNotFoundError
+________________________________________________________________ test_response_script_execution ________________________________________________________________
+
+    def test_response_script_execution():
+        """Test that the response script executes with an IP and creates output."""
+        suspicious_ip = "45.32.67.89"
+
+        try:
+>           subprocess.run(["/app/response.sh", suspicious_ip], check=True, timeout=10)
+
+/tests/test_outputs.py:73:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/local/lib/python3.13/subprocess.py:554: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.13/subprocess.py:1036: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+/usr/local/lib/python3.13/subprocess.py:1851: in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: None args: ['/app/response.sh', '45.32.67.89']>, args = ['/app/response.sh', '45.32.67.89'], executable = '/app/response.sh'
+env = None, restore_signals = True, close_fds = True, p2cread = -1, p2cwrite = -1, c2pread = -1, c2pwrite = -1, errread = -1, errwrite = -1
+
+    def _posix_spawn(self, args, executable, env, restore_signals, close_fds,
+                     p2cread, p2cwrite,
+                     c2pread, c2pwrite,
+                     errread, errwrite):
+        """Execute program using os.posix_spawn()."""
+        kwargs = {}
+        if restore_signals:
+            # See _Py_RestoreSignals() in Python/pylifecycle.c
+            sigset = []
+            for signame in ('SIGPIPE', 'SIGXFZ', 'SIGXFSZ'):
+                signum = getattr(signal, signame, None)
+                if signum is not None:
+                    sigset.append(signum)
+            kwargs['setsigdef'] = sigset
+
+        file_actions = []
+        for fd in (p2cwrite, c2pread, errread):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_CLOSE, fd))
+        for fd, fd2 in (
+            (p2cread, 0),
+            (c2pwrite, 1),
+            (errwrite, 2),
+        ):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_DUP2, fd, fd2))
+
+        if close_fds:
+            file_actions.append((os.POSIX_SPAWN_CLOSEFROM, 3))
+
+        if file_actions:
+            kwargs['file_actions'] = file_actions
+
+>       self.pid = os.posix_spawn(executable, args, env, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/response.sh'
+
+/usr/local/lib/python3.13/subprocess.py:1795: FileNotFoundError
+_____________________________________________________________ test_response_script_error_handling ______________________________________________________________
+
+    def test_response_script_error_handling():
+        """Test that the response script produces an error with invalid input."""
+        invalid_ip = "999.999.999.999"
+
+>       result = subprocess.run(
+            ["/app/response.sh", invalid_ip], capture_output=True, text=True
+        )
+
+/tests/test_outputs.py:97:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/local/lib/python3.13/subprocess.py:554: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.13/subprocess.py:1036: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+/usr/local/lib/python3.13/subprocess.py:1851: in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: None args: ['/app/response.sh', '999.999.999.999']>, args = ['/app/response.sh', '999.999.999.999'], executable = '/app/response.sh'
+env = None, restore_signals = True, close_fds = True, p2cread = -1, p2cwrite = -1, c2pread = 11, c2pwrite = 12, errread = 13, errwrite = 14
+
+    def _posix_spawn(self, args, executable, env, restore_signals, close_fds,
+                     p2cread, p2cwrite,
+                     c2pread, c2pwrite,
+                     errread, errwrite):
+        """Execute program using os.posix_spawn()."""
+        kwargs = {}
+        if restore_signals:
+            # See _Py_RestoreSignals() in Python/pylifecycle.c
+            sigset = []
+            for signame in ('SIGPIPE', 'SIGXFZ', 'SIGXFSZ'):
+                signum = getattr(signal, signame, None)
+                if signum is not None:
+                    sigset.append(signum)
+            kwargs['setsigdef'] = sigset
+
+        file_actions = []
+        for fd in (p2cwrite, c2pread, errread):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_CLOSE, fd))
+        for fd, fd2 in (
+            (p2cread, 0),
+            (c2pwrite, 1),
+            (errwrite, 2),
+        ):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_DUP2, fd, fd2))
+
+        if close_fds:
+            file_actions.append((os.POSIX_SPAWN_CLOSEFROM, 3))
+
+        if file_actions:
+            kwargs['file_actions'] = file_actions
+
+>       self.pid = os.posix_spawn(executable, args, env, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/response.sh'
+
+/usr/local/lib/python3.13/subprocess.py:1795: FileNotFoundError
+_______________________________________________________________________ test_performance _______________________________________________________________________
+
+    def test_performance():
+        """Test that script execute fine compared to a reference implementation."""
+
+        reference_script = """#!/bin/bash
+    # Reference implementation for benchmarking
+    echo '{"timestamp":"'$(date -Iseconds)'","alerts":[]}' > ref_alert.json
+    echo '{"timestamp":"'$(date -Iseconds)'","events":[],"statistics":{}}' > ref_report.json
+
+    for rule in $(jq -c '.rules[]' /app/rules/detection_rules.json); do
+        id=$(echo "$rule" | jq -r '.id')
+        pattern=$(echo "$rule" | jq -r '.pattern')
+        threshold=$(echo "$rule" | jq -r '.threshold')
+        severity=$(echo "$rule" | jq -r '.severity')
+
+        auth_matches=$(grep -E "$pattern" /app/logs/auth.log | wc -l)
+        http_matches=$(grep -E "$pattern" /app/logs/http.log | wc -l)
+        total_matches=$((auth_matches + http_matches))
+
+        jq --arg id "$id" --arg total "$total_matches" \
+           '.statistics[$id] = ($total|tonumber)' ref_report.json > tmp.json && \
+           mv tmp.json ref_report.json
+
+        if [ "$total_matches" -ge "$threshold" ]; then
+            ips=$(grep -E "$pattern" /app/logs/auth.log | \
+            grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' || echo "")
+            ips+=$'\n'$(grep -E "$pattern" /app/logs/http.log |
+            grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' || echo "")
+            unique_ips=$(echo "$ips" | grep -v '^$' | sort -u | tr '\n' ',' | sed 's/,$//')
+
+            alert=$(jq -n \
+                      --arg id "$id" \
+                      --arg sev "$severity" \
+                      --argjson matches "$total_matches" \
+                      --arg ips "$unique_ips" \
+                      '{id: $id, severity: $sev, matches: $matches, ips: $ips}')
+
+            jq --argjson alert "$alert" '.alerts += [$alert]' ref_alert.json > tmp.json && \
+            mv tmp.json ref_alert.json
+            jq --argjson alert "$alert" '.events += [$alert]' ref_report.json > tmp.json &&\
+            mv tmp.json ref_report.json
+        fi
+    done
+    """
+
+        with open("/app/reference_impl.sh", "w") as f:
+            f.write(reference_script)
+        os.chmod("/app/reference_impl.sh", 0o755)
+
+        start_time = time.time()
+        subprocess.run(["/app/reference_impl.sh"], check=True)
+        reference_time = time.time() - start_time
+
+        start_time = time.time()
+>       subprocess.run(["/app/intrusion_detector.sh"], check=True)
+
+/tests/test_outputs.py:162:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/usr/local/lib/python3.13/subprocess.py:554: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.13/subprocess.py:1036: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+/usr/local/lib/python3.13/subprocess.py:1851: in _execute_child
+    self._posix_spawn(args, executable, env, restore_signals, close_fds,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Popen: returncode: None args: ['/app/intrusion_detector.sh']>, args = ['/app/intrusion_detector.sh'], executable = '/app/intrusion_detector.sh'
+env = None, restore_signals = True, close_fds = True, p2cread = -1, p2cwrite = -1, c2pread = -1, c2pwrite = -1, errread = -1, errwrite = -1
+
+    def _posix_spawn(self, args, executable, env, restore_signals, close_fds,
+                     p2cread, p2cwrite,
+                     c2pread, c2pwrite,
+                     errread, errwrite):
+        """Execute program using os.posix_spawn()."""
+        kwargs = {}
+        if restore_signals:
+            # See _Py_RestoreSignals() in Python/pylifecycle.c
+            sigset = []
+            for signame in ('SIGPIPE', 'SIGXFZ', 'SIGXFSZ'):
+                signum = getattr(signal, signame, None)
+                if signum is not None:
+                    sigset.append(signum)
+            kwargs['setsigdef'] = sigset
+
+        file_actions = []
+        for fd in (p2cwrite, c2pread, errread):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_CLOSE, fd))
+        for fd, fd2 in (
+            (p2cread, 0),
+            (c2pwrite, 1),
+            (errwrite, 2),
+        ):
+            if fd != -1:
+                file_actions.append((os.POSIX_SPAWN_DUP2, fd, fd2))
+
+        if close_fds:
+            file_actions.append((os.POSIX_SPAWN_CLOSEFROM, 3))
+
+        if file_actions:
+            kwargs['file_actions'] = file_actions
+
+>       self.pid = os.posix_spawn(executable, args, env, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/app/intrusion_detector.sh'
+
+/usr/local/lib/python3.13/subprocess.py:1795: FileNotFoundError
+--------------------------------------------------------------------- Captured stderr call ---------------------------------------------------------------------
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid literal at line 2, column 0
+parse error: Invalid literal at line 2, column 0
+parse error: Invalid literal at line 2, column 0
+parse error: Invalid literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 8
+parse error: Invalid numeric literal at line 1, column 8
+parse error: Invalid numeric literal at line 1, column 8
+parse error: Invalid numeric literal at line 1, column 8
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid literal at line 1, column 4
+parse error: Invalid literal at line 1, column 4
+parse error: Invalid literal at line 1, column 4
+parse error: Invalid literal at line 1, column 4
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 9
+parse error: Invalid numeric literal at line 1, column 9
+parse error: Invalid numeric literal at line 1, column 9
+parse error: Invalid numeric literal at line 1, column 9
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 12
+parse error: Invalid numeric literal at line 1, column 12
+parse error: Invalid numeric literal at line 1, column 12
+parse error: Invalid numeric literal at line 1, column 12
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 6
+parse error: Invalid numeric literal at line 1, column 6
+parse error: Invalid numeric literal at line 1, column 6
+parse error: Invalid numeric literal at line 1, column 6
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 5
+parse error: Invalid numeric literal at line 1, column 5
+parse error: Invalid numeric literal at line 1, column 5
+parse error: Invalid numeric literal at line 1, column 5
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 10
+parse error: Invalid numeric literal at line 1, column 10
+parse error: Invalid numeric literal at line 1, column 10
+parse error: Invalid numeric literal at line 1, column 10
+/app/reference_impl.sh: line 18: [: : integer expression expected
+======================================================================= warnings summary =======================================================================
+../tests/test_outputs.py:112
+  /tests/test_outputs.py:112: SyntaxWarning: invalid escape sequence '\.'
+    reference_script = """#!/bin/bash
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=================================================================== short test summary info ====================================================================
+FAILED ../tests/test_outputs.py::test_intrusion_detector_exists - AssertionError: intrusion_detector.sh script does not exist
+FAILED ../tests/test_outputs.py::test_response_script_exists - AssertionError: response.sh script does not exist
+FAILED ../tests/test_outputs.py::test_intrusion_detector_content - FileNotFoundError: [Errno 2] No such file or directory: '/app/intrusion_detector.sh'
+FAILED ../tests/test_outputs.py::test_intrusion_detector_execution - FileNotFoundError: [Errno 2] No such file or directory: '/app/intrusion_detector.sh'
+FAILED ../tests/test_outputs.py::test_response_script_execution - FileNotFoundError: [Errno 2] No such file or directory: '/app/response.sh'
+FAILED ../tests/test_outputs.py::test_response_script_error_handling - FileNotFoundError: [Errno 2] No such file or directory: '/app/response.sh'
+FAILED ../tests/test_outputs.py::test_performance - FileNotFoundError: [Errno 2] No such file or directory: '/app/intrusion_detector.sh'
+================================================================= 7 failed, 1 warning in 3.42s =================================================================
+root@rack-ge107-ya-20250517193277:/app#
