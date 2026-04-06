@@ -8,7 +8,6 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
-
 TRAJ_ROOT = Path("/data/terminalbench/traj")
 
 

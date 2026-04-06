@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from codetracer.models import ErrorAnalysis, NormalizedTrajectory, StepCheckpoint, StepVerdict
+from codetracer.models import ErrorAnalysis, NormalizedTrajectory, StepCheckpoint
 from codetracer.utils.template import render_template
 
 _DEFAULT_BREAKPOINT_TEMPLATE = """\
@@ -90,7 +90,7 @@ class ContextInjector:
             "preceding_steps": [{"step_id": s.step_id, "action": s.action} for s in preceding],
             "target_step_id": checkpoint.target_step_id,
             "analysis_summary": analysis.summary if analysis else "",
-            "error_labels": [l.to_dict() for l in analysis.labels] if analysis else [],
+            "error_labels": [lbl.to_dict() for lbl in analysis.labels] if analysis else [],
             "problem_statement": "",
             "exploration_instructions": "",
         }

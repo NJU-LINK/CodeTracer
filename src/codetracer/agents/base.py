@@ -12,17 +12,18 @@ import logging
 import re
 import threading
 import time
+from collections.abc import Generator
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Generator
+from typing import Any
 
 from rich.console import Console
 
 from codetracer.agents.compact import CompactManager
 from codetracer.agents.executor import Executor
-from codetracer.services.cost_tracker import CostTracker
 from codetracer.llm.client import LLMClient
 from codetracer.plugins.hooks import HookManager, default_hooks
+from codetracer.services.cost_tracker import CostTracker
 
 console = Console(highlight=False)
 logger = logging.getLogger(__name__)
@@ -123,8 +124,7 @@ class BaseAgent:
         result = ""
         while not self._abort.is_set():
             try:
-                for event in self._step_iter():
-                    yield event
+                yield from self._step_iter()
             except FormatError as e:
                 self._add("user", str(e))
                 yield AgentEvent("format_error", {"error": str(e)})

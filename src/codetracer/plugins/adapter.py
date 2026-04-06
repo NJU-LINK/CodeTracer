@@ -102,7 +102,6 @@ class GenericPluginAdapter(PluginAdapter):
 
         from codetracer.agents.context import ContextAssembler
         from codetracer.agents.trace_agent import TraceAgent
-        from codetracer.llm.client import LLMClient
         from codetracer.query.tree_builder import TreeBuilder
         from codetracer.skills.pool import SkillPool
 

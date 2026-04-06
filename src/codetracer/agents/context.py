@@ -12,11 +12,10 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from codetracer.utils.template import render_template as _render_tpl
-
 from codetracer.models.task import TaskContext
 from codetracer.skills.loader import Skill
 from codetracer.skills.pool import SkillPool
+from codetracer.utils.template import render_template as _render_tpl
 
 
 class ContextAssembler:

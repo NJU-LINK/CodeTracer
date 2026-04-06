@@ -151,7 +151,7 @@ class SweBenchProvider(BenchProvider):
         repo_url = ctx.get("repo_url")
         base_commit = ctx.get("base_commit")
         if not repo_url or not base_commit:
-            raise ValueError(f"SWE-bench sandbox requires repo_url and base_commit")
+            raise ValueError("SWE-bench sandbox requires repo_url and base_commit")
 
         logger.info("Cloning %s -> %s", repo_url, sandbox)
         subprocess.run(["git", "clone", "--quiet", repo_url, str(sandbox)], check=True, timeout=300)

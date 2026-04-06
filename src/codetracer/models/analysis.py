@@ -44,13 +44,13 @@ class ErrorAnalysis:
 
     @property
     def first_incorrect_step_id(self) -> int | None:
-        incorrect = [l for l in self.labels if l.verdict == StepVerdict.INCORRECT]
-        return min((l.step_id for l in incorrect), default=None)
+        incorrect = [lbl for lbl in self.labels if lbl.verdict == StepVerdict.INCORRECT]
+        return min((lbl.step_id for lbl in incorrect), default=None)
 
     def to_dict(self) -> dict:
         return {
             "traj_id": self.traj_id,
-            "labels": [l.to_dict() for l in self.labels],
+            "labels": [lbl.to_dict() for lbl in self.labels],
             "summary": self.summary,
             "metadata": self.metadata,
         }
@@ -59,7 +59,7 @@ class ErrorAnalysis:
     def from_dict(cls, d: dict) -> ErrorAnalysis:
         return cls(
             traj_id=d.get("traj_id", ""),
-            labels=[StepLabel.from_dict(l) for l in d.get("labels", [])],
+            labels=[StepLabel.from_dict(lbl) for lbl in d.get("labels", [])],
             summary=d.get("summary", ""),
             metadata=d.get("metadata", {}),
         )

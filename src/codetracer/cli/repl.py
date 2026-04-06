@@ -14,9 +14,8 @@ from pathlib import Path
 from typing import Any
 
 from rich import box
-from rich.align import Align
 from rich.columns import Columns
-from rich.console import Console, Group
+from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
@@ -315,7 +314,7 @@ def interactive_repl(
                 break
             last_interrupt = now
             console.print(
-                f"\n  [dim]Interrupted \u00b7 What should CodeTracer do instead?[/]"
+                "\n  [dim]Interrupted \u00b7 What should CodeTracer do instead?[/]"
             )
             continue
 
@@ -605,8 +604,8 @@ def _action_root_cause(store: Any, arg: str = "") -> None:
     analysis_info = ""
     if s.analysis and s.analysis.labels:
         analysis_info = "\n".join(
-            f"- Step {l.step_id} ({l.verdict.value}): {l.reasoning}"
-            for l in s.analysis.labels
+            f"- Step {lbl.step_id} ({lbl.verdict.value}): {lbl.reasoning}"
+            for lbl in s.analysis.labels
         )
 
     analysis_block = ("Existing error labels:\n" + analysis_info + "\n\n") if analysis_info else ""
@@ -828,15 +827,15 @@ def _discover_and_normalize(
     config: dict[str, Any],
 ) -> Any:
     """Handle unknown trajectory format: show directory listing, invoke SkillGenerator, normalize."""
-    from codetracer.utils.llm_generator import list_dir, sample_files
     from codetracer.skills.generator import SkillGenerator
+    from codetracer.utils.llm_generator import list_dir, sample_files
 
     console.print(f"\n[yellow]Unknown trajectory format in [bold]{run_dir}[/bold][/]")
 
     listing = list_dir(run_dir)
     listing_lines = listing.splitlines()
     n_files = len(listing_lines)
-    preview = "\n".join(f"  {l}" for l in listing_lines[:20])
+    preview = "\n".join(f"  {ln}" for ln in listing_lines[:20])
     if n_files > 20:
         preview += f"\n  [dim]... and {n_files - 20} more files[/]"
     console.print(Panel(
@@ -858,9 +857,9 @@ def _discover_and_normalize(
 
     if llm is None:
         console.print(
-            f"[red]No LLM configured -- cannot auto-generate a parser.[/]\n"
-            f"[dim]Pass --model/--api-base/--api-key to enable skill generation,[/]\n"
-            f"[dim]or set OPENAI_BASE_URL and OPENAI_API_KEY environment variables.[/]"
+            "[red]No LLM configured -- cannot auto-generate a parser.[/]\n"
+            "[dim]Pass --model/--api-base/--api-key to enable skill generation,[/]\n"
+            "[dim]or set OPENAI_BASE_URL and OPENAI_API_KEY environment variables.[/]"
         )
         return None
 
@@ -917,8 +916,8 @@ def _build_chat_system_prompt(store: Any) -> str:
     analysis_info = ""
     if s.analysis and hasattr(s.analysis, "labels") and s.analysis.labels:
         analysis_info = "Known errors:\n" + "\n".join(
-            f"- Step {l.step_id} ({l.verdict.value}): {l.reasoning}"
-            for l in s.analysis.labels
+            f"- Step {lbl.step_id} ({lbl.verdict.value}): {lbl.reasoning}"
+            for lbl in s.analysis.labels
         )
 
     stages_info = ""

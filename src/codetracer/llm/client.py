@@ -23,7 +23,6 @@ from openai import (
 from pydantic import BaseModel
 from tenacity import (
     RetryCallState,
-    before_sleep_log,
     retry,
     retry_if_exception,
     stop_after_attempt,
