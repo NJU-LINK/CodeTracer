@@ -1,0 +1,54 @@
+name: swe_bench
+description: "SWE-bench family (verified, pro, multi, poly) — single provider, variant configs"
+fingerprints:
+  - summary.json
+runner_type: git
+
+variants:
+  verified:
+    hf_dataset_id: "princeton-nlp/SWE-bench_Verified"
+    hf_split: "test"
+    field_mappings:
+      case_id: instance_id
+      repo: repo
+      commit: base_commit
+      problem: problem_statement
+  pro:
+    hf_dataset_id: "ScaleAI/SWE-bench_Pro"
+    hf_split: "test"
+    field_mappings:
+      case_id: instance_id
+      repo: repo
+      commit: base_commit
+      problem: problem_statement
+  multi:
+    hf_dataset_id: "ByteDance-Seed/Multi-SWE-bench"
+    hf_split: null
+    lang_dirs:
+      - c
+      - cpp
+      - go
+      - java
+      - js
+      - python
+      - rust
+      - ts
+    field_mappings:
+      case_id: instance_id
+      repo: repo
+      commit: "base.sha"
+      problem: "resolved_issues"
+  poly:
+    hf_dataset_id: "AmazonScience/SWE-PolyBench"
+    hf_split: "test"
+    field_mappings:
+      case_id: instance_id
+      repo: repo
+      commit: base_commit
+      problem: problem_statement
+
+exploration_commands:
+  - "ls {sandbox}/"
+  - "Explore the repo structure to understand the codebase"
+  - "Navigate to the area of code related to the problem statement"
+  - "Read relevant source files to understand the context"

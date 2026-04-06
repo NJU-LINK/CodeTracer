@@ -1,0 +1,28 @@
+# Skill template for Devin (Cognition) agent
+name: devin
+agent: devin
+description: Template for injecting CodeTracer analysis into Devin sessions
+metadata:
+  version: "0.1"
+  author: codetracer
+
+# TODO: tailor these templates to Devin's conversation format once API is available
+error_format: |
+  <analysis source="codetracer">
+  {% for label in analysis.labels %}
+  <step id="{{ label.step_id }}" verdict="{{ label.verdict }}">{{ label.reasoning }}</step>
+  {% endfor %}
+  {% if analysis.summary %}
+  <summary>{{ analysis.summary }}</summary>
+  {% endif %}
+  </analysis>
+
+replay_instructions: |
+  <replay target_step="{{ target_step_id }}">
+  Environment restored. Previous errors have been analyzed.
+  Continue with a corrected approach.
+  </replay>
+
+context_injection: |
+  {{ error_block }}
+  {{ replay_block }}
