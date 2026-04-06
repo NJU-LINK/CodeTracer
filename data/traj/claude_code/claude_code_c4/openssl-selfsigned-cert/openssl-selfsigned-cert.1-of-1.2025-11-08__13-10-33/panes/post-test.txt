@@ -1,0 +1,96 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Fetched 55.4 kB in 1s (81.9 kB/s)
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 37 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.45s
+Prepared 5 packages in 1.14s
+Installed 5 packages in 49ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==8.4.2
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-8.4.2, pluggy-1.6.0
+rootdir: /tests
+collected 6 items
+
+../tests/test_outputs.py ....F.                                                                                                                          [100%]
+
+=========================================================================== FAILURES ===========================================================================
+____________________________________________________________________ test_verification_file ____________________________________________________________________
+
+    def test_verification_file():
+        """Test that the verification file exists with correct content."""
+        verification_file = "/app/ssl/verification.txt"
+        assert os.path.exists(verification_file), "Verification file does not exist"
+
+        with open(verification_file, "r") as f:
+            verification_content = f.read()
+
+        # Check for subject information
+        assert "subject" in verification_content.lower(), (
+            "Verification file does not contain subject information"
+        )
+        assert "dev-internal.company.local" in verification_content, (
+            "Verification file does not contain the correct Common Name"
+        )
+
+        # Check for validity dates
+        date_formats_found = (
+            re.search(r"\d{4}-\d{2}-\d{2}", verification_content)  # YYYY-MM-DD format
+            or re.search(
+                r"[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+\d{4}(?:\s+[A-Z]+)?",
+                verification_content,
+            )  # OpenSSL format with optional timezone
+        )
+
+        assert date_formats_found, (
+            "Verification file does not contain properly formatted dates"
+        )
+
+        # Check for SHA-256 fingerprint
+>       assert "sha256" in verification_content.lower(), (
+            "Verification file does not contain SHA-256 fingerprint"
+        )
+E       AssertionError: Verification file does not contain SHA-256 fingerprint
+E       assert 'sha256' in 'certificate verification details\n================================\n\nsubject: o = devops team, cn = dev-internal.com...\nsha-256 fi
+ngerprint: cd:80:75:d3:fe:59:ed:8c:4c:30:a3:7e:8c:86:08:77:86:0e:1e:16:be:c9:da:11:e7:e1:b5:d1:6f:4b:e4:f4'
+E        +  where 'certificate verification details\n================================\n\nsubject: o = devops team, cn = dev-internal.com...\nsha-256 fingerprint
+: cd:80:75:d3:fe:59:ed:8c:4c:30:a3:7e:8c:86:08:77:86:0e:1e:16:be:c9:da:11:e7:e1:b5:d1:6f:4b:e4:f4' = <built-in method lower of str object at 0x7fb890439b30>()
+E        +    where <built-in method lower of str object at 0x7fb890439b30> = 'Certificate Verification Details\n================================\n\nSubject: O
+= DevOps Team, CN = dev-internal.com...\nSHA-256 Fingerprint: CD:80:75:D3:FE:59:ED:8C:4C:30:A3:7E:8C:86:08:77:86:0E:1E:16:BE:C9:DA:11:E7:E1:B5:D1:6F:4B:E4:F4'.l
+ower
+
+/tests/test_outputs.py:148: AssertionError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_directory_structure
+PASSED ../tests/test_outputs.py::test_key_file
+PASSED ../tests/test_outputs.py::test_certificate_file
+PASSED ../tests/test_outputs.py::test_combined_pem_file
+PASSED ../tests/test_outputs.py::test_python_verification_script
+FAILED ../tests/test_outputs.py::test_verification_file - AssertionError: Verification file does not contain SHA-256 fingerprint
+================================================================= 1 failed, 5 passed in 0.40s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

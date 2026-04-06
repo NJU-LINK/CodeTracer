@@ -1,0 +1,79 @@
+root@rack-ge107-ya-20250517193277:/app/personal-site# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 36 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `personal-site`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.26s
+Prepared 5 packages in 969ms
+Installed 5 packages in 58ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+Resolved 14 packages in 1.87s
+Prepared 7 packages in 2.17s
+Installed 7 packages in 624ms
+ + boto3==1.40.69
+ + botocore==1.40.69
+ + jmespath==1.0.1
+ + python-dateutil==2.9.0.post0
+ + s3transfer==0.14.0
+ + six==1.17.0
+ + urllib3==2.5.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 2 items
+
+../../tests/test_outputs.py F.                                                                                                                           [100%]
+
+=========================================================================== FAILURES ===========================================================================
+_______________________________________________________________________ test_about_file ________________________________________________________________________
+
+    def test_about_file():
+        ABOUT_FILE_PATH_OLD = "/app/resources/patch_files/about.md"
+        ABOUT_FILE_PATH_NEW = "/app/personal-site/_includes/about.md"
+>       compare_file_hashes(ABOUT_FILE_PATH_OLD, ABOUT_FILE_PATH_NEW)
+
+/tests/test_outputs.py:27:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path_a = '/app/resources/patch_files/about.md', path_b = '/app/personal-site/_includes/about.md'
+
+    def compare_file_hashes(path_a, path_b):
+>       assert hash_file(path_a) == hash_file(path_b), (
+            f"File {path_a} is not in the correct state"
+        )
+E       AssertionError: File /app/resources/patch_files/about.md is not in the correct state
+E       assert '83a57206238e...e5f3d78424e0d' == '0273104059c6...67b8847b22946'
+E
+E         - 0273104059c6bf524e767b8847b22946
+E         + 83a57206238e7f9b073e5f3d78424e0d
+
+/tests/test_outputs.py:19: AssertionError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../../tests/test_outputs.py::test_layout_file
+FAILED ../../tests/test_outputs.py::test_about_file - AssertionError: File /app/resources/patch_files/about.md is not in the correct state
+================================================================= 1 failed, 1 passed in 0.07s ==================================================================
+root@rack-ge107-ya-20250517193277:/app/personal-site#

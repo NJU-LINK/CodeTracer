@@ -1,0 +1,50 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Collecting pytest
+  Downloading pytest-9.0.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=22 (from pytest)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Downloading pytest-9.0.0-py3-none-any.whl (373 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 373.4/373.4 kB 1.1 MB/s eta 0:00:00
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 66.5/66.5 kB 683.9 kB/s eta 0:00:00
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 4.8 MB/s eta 0:00:00
+Installing collected packages: pygments, pluggy, packaging, iniconfig, pytest
+Successfully installed iniconfig-2.3.0 packaging-25.0 pluggy-1.6.0 pygments-2.19.2 pytest-9.0.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.12.3, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../tests/test_outputs.py ..F                                                                                                                             [100%]
+
+=========================================================================== FAILURES ===========================================================================
+_____________________________________________________________________ test_solution_found ______________________________________________________________________
+
+    def test_solution_found():
+        """Test that the solution was found and printed to terminal"""
+        # Check the terminal output for the solution
+        agent_output = "/app/solution.txt"
+>       assert os.path.exists(agent_output), "Agent output file does not exist"
+E       AssertionError: Agent output file does not exist
+E       assert False
+E        +  where False = <function exists at 0x7fd54e863600>('/app/solution.txt')
+E        +    where <function exists at 0x7fd54e863600> = <module 'posixpath' (frozen)>.exists
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+/tests/test_outputs.py:39: AssertionError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_system_logs_exists
+PASSED ../tests/test_outputs.py::test_no_sensitive_exposure
+FAILED ../tests/test_outputs.py::test_solution_found - AssertionError: Agent output file does not exist
+================================================================= 1 failed, 2 passed in 0.05s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

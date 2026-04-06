@@ -1,0 +1,206 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Collecting pytest
+  Downloading pytest-9.0.0-py3-none-any.whl.metadata (7.6 kB)
+Requirement already satisfied: requests in /usr/local/lib/python3.13/site-packages (2.32.5)
+Collecting iniconfig>=1.0.1 (from pytest)
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting packaging>=22 (from pytest)
+  Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting pluggy<2,>=1.5 (from pytest)
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest)
+  Downloading pygments-2.19.2-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in /usr/local/lib/python3.13/site-packages (from requests) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.13/site-packages (from requests) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.13/site-packages (from requests) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.13/site-packages (from requests) (2025.10.5)
+Downloading pytest-9.0.0-py3-none-any.whl (373 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading packaging-25.0-py3-none-any.whl (66 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 3.8 MB/s eta 0:00:00
+Installing collected packages: pygments, pluggy, packaging, iniconfig, pytest
+Successfully installed iniconfig-2.3.0 packaging-25.0 pluggy-1.6.0 pygments-2.19.2 pytest-9.0.0
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your syst
+em unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you ar
+e doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.3.1 -> 25.3
+[notice] To update, run: pip install --upgrade pip
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0 -- /usr/local/bin/python3.13
+cachedir: .pytest_cache
+rootdir: /tests
+collected 8 items
+
+../tests/test_outputs.py::test_nginx_installed PASSED                                                                                                    [ 12%]
+../tests/test_outputs.py::test_nginx_running PASSED                                                                                                      [ 25%]
+../tests/test_outputs.py::test_index_page_content PASSED                                                                                                 [ 37%]
+../tests/test_outputs.py::test_custom_404_page PASSED                                                                                                    [ 50%]
+../tests/test_outputs.py::test_nginx_config_syntax PASSED                                                                                                [ 62%]
+../tests/test_outputs.py::test_nginx_config_settings FAILED                                                                                              [ 75%]
+../tests/test_outputs.py::test_log_file_creation PASSED                                                                                                  [ 87%]
+../tests/test_outputs.py::test_log_file_format PASSED                                                                                                    [100%]
+
+=========================================================================== FAILURES ===========================================================================
+__________________________________________________________________ test_nginx_config_settings __________________________________________________________________
+
+    def test_nginx_config_settings():
+        """Test that the Nginx configuration has the required settings."""
+        # Check if the configuration file exists
+        config_files = [
+            "/etc/nginx/conf.d/benchmark-site.conf",
+        ]
+
+        config_found = False
+        config_content = ""
+
+        for config_file in config_files:
+            if Path(config_file).exists():
+                config_found = True
+                config_content = Path(config_file).read_text()
+                break
+
+        assert config_found, "Could not find Nginx configuration file"
+
+        # Check port configuration
+        assert re.search(r"listen\s+8080", config_content), "Port 8080 is not configured"
+
+        # Check document root
+        assert re.search(r"root\s+/var/www/html", config_content), (
+            "Document root is not set to /var/www/html"
+        )
+
+        config_files = [
+            "/etc/nginx/nginx.conf",
+        ]
+
+        config_found = False
+        config_content = ""
+
+        for config_file in config_files:
+            if Path(config_file).exists():
+                config_found = True
+                config_content = Path(config_file).read_text()
+                break
+
+        # Check custom logging format
+        check_pass = True
+        formats = [
+            "log_format",
+            "detailed",
+            "$time_local",
+            "$request_method",
+            "$status",
+            "$http_user_agent",
+        ]
+        for format_ in formats:
+            if format_ not in config_content:
+                check_pass = False
+>       assert check_pass, f"Custom log format is missing required fields{config_content}"
+E       AssertionError: Custom log format is missing required fieldsuser www-data;
+E         worker_processes auto;
+E         pid /run/nginx.pid;
+E         error_log /var/log/nginx/error.log;
+E         include /etc/nginx/modules-enabled/*.conf;
+E
+E         events {
+E               worker_connections 768;
+E               # multi_accept on;
+E         }
+E
+E         http {
+E
+E               ##
+E               # Basic Settings
+E               ##
+E
+E               sendfile on;
+E               tcp_nopush on;
+E               types_hash_max_size 2048;
+E               # server_tokens off;
+E
+E               # server_names_hash_bucket_size 64;
+E               # server_name_in_redirect off;
+E
+E               include /etc/nginx/mime.types;
+E               default_type application/octet-stream;
+E
+E               ##
+E               # SSL Settings
+E               ##
+E
+E               ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
+E               ssl_prefer_server_ciphers on;
+E
+E               ##
+E               # Logging Settings
+E               ##
+E
+E               access_log /var/log/nginx/access.log;
+E
+E               ##
+E               # Gzip Settings
+E               ##
+E
+E               gzip on;
+E
+E               # Rate limiting zone for benchmark site
+E               limit_req_zone $binary_remote_addr zone=benchmark:10m rate=10r/s;
+E
+E               # Custom log format for benchmark site
+E               log_format benchmark_log '$time_local - $request_method - $status - "$http_user_agent"';
+E
+E               # gzip_vary on;
+E               # gzip_proxied any;
+E               # gzip_comp_level 6;
+E               # gzip_buffers 16 8k;
+E               # gzip_http_version 1.1;
+E               # gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+E
+E               ##
+E               # Virtual Host Configs
+E               ##
+E
+E               include /etc/nginx/conf.d/*.conf;
+E               include /etc/nginx/sites-enabled/*;
+E         }
+E
+E
+E         #mail {
+E         #     # See sample authentication script at:
+E         #     # http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript
+E         #
+E         #     # auth_http localhost/auth.php;
+E         #     # pop3_capabilities "TOP" "USER";
+E         #     # imap_capabilities "IMAP4rev1" "UIDPLUS";
+E         #
+E         #     server {
+E         #             listen     localhost:110;
+E         #             protocol   pop3;
+E         #             proxy      on;
+E         #     }
+E         #
+E         #     server {
+E         #             listen     localhost:143;
+E         #             protocol   imap;
+E         #             proxy      on;
+E         #     }
+E         #}
+E
+E       assert False
+
+/tests/test_outputs.py:119: AssertionError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_nginx_installed
+PASSED ../tests/test_outputs.py::test_nginx_running
+PASSED ../tests/test_outputs.py::test_index_page_content
+PASSED ../tests/test_outputs.py::test_custom_404_page
+PASSED ../tests/test_outputs.py::test_nginx_config_syntax
+PASSED ../tests/test_outputs.py::test_log_file_creation
+PASSED ../tests/test_outputs.py::test_log_file_format
+FAILED ../tests/test_outputs.py::test_nginx_config_settings - AssertionError: Custom log format is missing required fieldsuser www-data;
+================================================================= 1 failed, 7 passed in 2.17s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

@@ -1,0 +1,116 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 37 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.20s
+Prepared 5 packages in 1.01s
+Installed 5 packages in 53ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 6 items
+
+../tests/test_outputs.py ....FF                                                                                                                          [100%]
+
+=========================================================================== FAILURES ===========================================================================
+____________________________________________________________________ test_verification_file ____________________________________________________________________
+
+    def test_verification_file():
+        """Test that the verification file exists with correct content."""
+        verification_file = "/app/ssl/verification.txt"
+        assert os.path.exists(verification_file), "Verification file does not exist"
+
+        with open(verification_file, "r") as f:
+            verification_content = f.read()
+
+        # Check for subject information
+        assert "subject" in verification_content.lower(), (
+            "Verification file does not contain subject information"
+        )
+        assert "dev-internal.company.local" in verification_content, (
+            "Verification file does not contain the correct Common Name"
+        )
+
+        # Check for validity dates
+        date_formats_found = (
+            re.search(r"\d{4}-\d{2}-\d{2}", verification_content)  # YYYY-MM-DD format
+            or re.search(
+                r"[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}\s+\d{4}(?:\s+[A-Z]+)?",
+                verification_content,
+            )  # OpenSSL format with optional timezone
+        )
+
+        assert date_formats_found, (
+            "Verification file does not contain properly formatted dates"
+        )
+
+        # Check for SHA-256 fingerprint
+>       assert "sha256" in verification_content.lower(), (
+            "Verification file does not contain SHA-256 fingerprint"
+        )
+E       AssertionError: Verification file does not contain SHA-256 fingerprint
+E       assert 'sha256' in 'subject:\no = devops team, cn = dev-internal.company.local\n\nvalidity:\nnotbefore=nov  9 07:34:03 2025 gmt\nnotafter...ha-256 finge
+rprint:\nc6:fc:68:da:f2:63:91:5f:d4:f6:2b:c3:16:80:ea:e6:cd:37:95:2b:21:38:9f:99:03:a0:a2:aa:0b:ca:bb:84\n'
+E        +  where 'subject:\no = devops team, cn = dev-internal.company.local\n\nvalidity:\nnotbefore=nov  9 07:34:03 2025 gmt\nnotafter...ha-256 fingerprint:\n
+c6:fc:68:da:f2:63:91:5f:d4:f6:2b:c3:16:80:ea:e6:cd:37:95:2b:21:38:9f:99:03:a0:a2:aa:0b:ca:bb:84\n' = <built-in method lower of str object at 0x7f6d70ae6040>()
+E        +    where <built-in method lower of str object at 0x7f6d70ae6040> = 'Subject:\nO = DevOps Team, CN = dev-internal.company.local\n\nValidity:\nnotBefor
+e=Nov  9 07:34:03 2025 GMT\nnotAfter...HA-256 Fingerprint:\nC6:FC:68:DA:F2:63:91:5F:D4:F6:2B:C3:16:80:EA:E6:CD:37:95:2B:21:38:9F:99:03:A0:A2:AA:0B:CA:BB:84\n'.l
+ower
+
+/tests/test_outputs.py:148: AssertionError
+_______________________________________________________________ test_python_verification_script ________________________________________________________________
+
+    def test_python_verification_script():
+        """Test that the Python verification script exists and works correctly."""
+        script_path = "/app/check_cert.py"
+        assert os.path.exists(script_path), "Python verification script does not exist"
+
+        # Check script content
+        with open(script_path, "r") as f:
+            script_content = f.read()
+
+        # Make sure it imports the required modules
+        assert "import ssl" in script_content, "Script does not import ssl module"
+>       assert "import subprocess" in script_content, (
+            "Script does not import subprocess module"
+        )
+E       AssertionError: Script does not import subprocess module
+E       assert 'import subprocess' in '#!/usr/bin/env python3\n\nimport ssl\nfrom datetime import datetime\nimport os\n\ndef check_certificate():\n    cert_...(
+):\n        print("Certificate verification successful")\n    else:\n        print("Certificate verification failed")'
+
+/tests/test_outputs.py:164: AssertionError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_directory_structure
+PASSED ../tests/test_outputs.py::test_key_file
+PASSED ../tests/test_outputs.py::test_certificate_file
+PASSED ../tests/test_outputs.py::test_combined_pem_file
+FAILED ../tests/test_outputs.py::test_verification_file - AssertionError: Verification file does not contain SHA-256 fingerprint
+FAILED ../tests/test_outputs.py::test_python_verification_script - AssertionError: Script does not import subprocess module
+================================================================= 2 failed, 4 passed in 0.17s ==================================================================
+root@rack-ge107-ya-20250517193277:/app#

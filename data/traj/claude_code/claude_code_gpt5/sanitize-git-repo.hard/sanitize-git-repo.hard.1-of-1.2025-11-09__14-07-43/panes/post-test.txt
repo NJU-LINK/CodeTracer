@@ -1,0 +1,107 @@
+root@rack-ge107-ya-20250517193277:/app/dclm# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 36 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `dclm`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.37s
+Prepared 5 packages in 934ms
+Installed 5 packages in 43ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+Resolved 10 packages in 1.56s
+Prepared 3 packages in 769ms
+Installed 3 packages in 24ms
+ + gitdb==4.0.12
+ + gitpython==3.1.45
+ + smmap==5.0.2
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 3 items
+
+../../tests/test_outputs.py .FF                                                                                                                          [100%]
+
+=========================================================================== FAILURES ===========================================================================
+________________________________________________________ test_correct_replacement_of_secret_information ________________________________________________________
+
+    def test_correct_replacement_of_secret_information():
+        CONTAMINATED_PATHS = [
+            "/app/dclm/ray_processing/ray_cluster.yaml",
+            "/app/dclm/ray_processing/process.py",
+        ]
+        DECONTAMINATED_PATHS = [
+            Path(__file__).parent / "ray_cluster.yaml",
+            Path(__file__).parent / "process.py",
+        ]
+
+        for contaminated_path, decontaminated_path in zip(
+            CONTAMINATED_PATHS, DECONTAMINATED_PATHS
+        ):
+            with open(contaminated_path, "r") as file:
+                contaminated_text = file.read()
+
+            with open(decontaminated_path, "r") as file:
+                decontaminated_text = file.read()
+
+>           assert contaminated_text == decontaminated_text
+E           AssertionError: assert '# An unique ... $USER /tmp\n' == '# An unique ... $USER /tmp\n'
+E
+E             Skipping 1717 identical leading characters in diff, use -v to show
+E             - b https://<your-github-token>@github.com/mlfoundations/dcnlp.git
+E             + b https://${GITHUB_USER:-github}:${GITHUB_TOKEN:-<your-github-token>}@github.com/mlfoundations/dcnlp.git
+E             ?           +++++++++++++++++++++++++++++++++++++++                   +
+E                   - huggingface-cli login --token <your-huggingface-token> -y
+E                   #- sudo mkfs -t xfs /dev/nvme1n1...
+E
+E             ...Full output truncated (2 lines hidden), use '-vv' to show
+
+/tests/test_outputs.py:49: AssertionError
+_________________________________________________________________ test_no_other_files_changed __________________________________________________________________
+
+    def test_no_other_files_changed():
+        # Check that no files other than CONTAMINATED_PATHS have been changed
+        repo = git.Repo("/app/dclm")
+
+        # Specific commit before any changes were made
+        commit = repo.commit("d6987af002b122fef54bc0be402062c76488a4d9")
+        diff = commit.diff(None)
+
+        for d in diff:
+            path = d.b_path
+            if os.path.join("/app/dclm", path) not in CONTAMINATED_PATHS:
+>               raise ValueError(f"File {path} has been changed")
+E               ValueError: File exp_data/datasets/tokenized/dfn_rw_v2_peS2o_rpjbooks_wikipedia_en_balanced_tokenized_v2-d=576_l=24_h=8-warm=400-lr=0p003-wd=0p0
+33-cd=3e-05-bs=512-mult=1-seed=0-tokens=30735475200_top10_mean_0.7_2048.json has been changed
+
+/tests/test_outputs.py:63: ValueError
+============================================================================ PASSES ============================================================================
+=================================================================== short test summary info ====================================================================
+PASSED ../../tests/test_outputs.py::test_removal_of_secret_information
+FAILED ../../tests/test_outputs.py::test_correct_replacement_of_secret_information - AssertionError: assert '# An unique ... $USER /tmp\n' == '# An unique ... $
+USER /tmp\n'
+FAILED ../../tests/test_outputs.py::test_no_other_files_changed - ValueError: File exp_data/datasets/tokenized/dfn_rw_v2_peS2o_rpjbooks_wikipedia_en_balanced_to
+kenized_v2-d=576_l=24_h=8-warm=400-lr=0p003-wd=0p033-cd=3e-05...
+================================================================= 2 failed, 1 passed in 0.33s ==================================================================
+root@rack-ge107-ya-20250517193277:/app/dclm#

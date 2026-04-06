@@ -1,0 +1,242 @@
+root@rack-ge107-ya-20250517193277:/app# bash /tests/run-tests.sh; tmux wait -S done
+Hit:1 http://deb.debian.org/debian bookworm InRelease
+Hit:2 http://deb.debian.org/debian bookworm-updates InRelease
+Hit:3 http://deb.debian.org/debian-security bookworm-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+curl is already the newest version (7.88.1-10+deb12u14).
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+downloading uv 0.9.8 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Initialized project `app`
+Using CPython 3.13.1 interpreter at: /usr/local/bin/python3.13
+Creating virtual environment at: .venv
+Resolved 7 packages in 1.48s
+Prepared 5 packages in 961ms
+Installed 5 packages in 41ms
+ + iniconfig==2.3.0
+ + packaging==25.0
+ + pluggy==1.6.0
+ + pygments==2.19.2
+ + pytest==9.0.0
+===================================================================== test session starts ======================================================================
+platform linux -- Python 3.13.1, pytest-9.0.0, pluggy-1.6.0
+rootdir: /tests
+collected 7 items
+
+../tests/test_outputs.py ..F..F.                                                                                                                         [100%]
+
+=========================================================================== FAILURES ===========================================================================
+_______________________________________________________________ test_intrusion_detector_content ________________________________________________________________
+
+    def test_intrusion_detector_content():
+        """Test the content of the intrusion_detector.sh script."""
+        with open("/app/intrusion_detector.sh", "r") as f:
+            content = f.read()
+
+>       assert re.search(r"cat.*rules/detection_rules\.json", content) or "jq" in content, (
+            "Script should use the rules file"
+        )
+E       AssertionError: Script should use the rules file
+E       assert (None or 'jq' in '#!/usr/bin/env bash\nset -euo pipefail\n\n# Intrusion Detection Script\n# Parses /app/logs/auth.log and /app/logs/htt...printf
+\'  }\\n}\\n\'\n} > "$REPORT_JSON"\n\n# Done\nprintf \'Generated: %s and %s\\n\' "$ALERT_JSON" "$REPORT_JSON"\n')
+E        +  where None = <function search at 0x7ff18ff1cae0>('cat.*rules/detection_rules\\.json', '#!/usr/bin/env bash\nset -euo pipefail\n\n# Intrusion Detecti
+on Script\n# Parses /app/logs/auth.log and /app/logs/htt...printf \'  }\\n}\\n\'\n} > "$REPORT_JSON"\n\n# Done\nprintf \'Generated: %s and %s\\n\' "$ALERT_JSON"
+ "$REPORT_JSON"\n')
+E        +    where <function search at 0x7ff18ff1cae0> = re.search
+
+/tests/test_outputs.py:32: AssertionError
+_____________________________________________________________ test_response_script_error_handling ______________________________________________________________
+
+    def test_response_script_error_handling():
+        """Test that the response script produces an error with invalid input."""
+        invalid_ip = "999.999.999.999"
+
+        result = subprocess.run(
+            ["/app/response.sh", invalid_ip], capture_output=True, text=True
+        )
+
+        if result.returncode == 0:
+>           assert "error" in result.stdout.lower() or "invalid" in result.stdout.lower(), (
+                "Script should print error message for invalid IP"
+            )
+E           AssertionError: Script should print error message for invalid IP
+E           assert ('error' in 'incident report written: /app/incident_999.999.999.999_20251109t172615z.txt\n' or 'invalid' in 'incident report written: /app/in
+cident_999.999.999.999_20251109t172615z.txt\n')
+E            +  where 'incident report written: /app/incident_999.999.999.999_20251109t172615z.txt\n' = <built-in method lower of str object at 0x7ff18f1d1830>(
+)
+E            +    where <built-in method lower of str object at 0x7ff18f1d1830> = 'Incident report written: /app/incident_999.999.999.999_20251109T172615Z.txt\n
+'.lower
+E            +      where 'Incident report written: /app/incident_999.999.999.999_20251109T172615Z.txt\n' = CompletedProcess(args=['/app/response.sh', '999.999.
+999.999'], returncode=0, stdout='Incident report written: /app/incident_999.999.999.999_20251109T172615Z.txt\n', stderr='').stdout
+E            +  and   'incident report written: /app/incident_999.999.999.999_20251109t172615z.txt\n' = <built-in method lower of str object at 0x7ff18f1d1830>(
+)
+E            +    where <built-in method lower of str object at 0x7ff18f1d1830> = 'Incident report written: /app/incident_999.999.999.999_20251109T172615Z.txt\n
+'.lower
+E            +      where 'Incident report written: /app/incident_999.999.999.999_20251109T172615Z.txt\n' = CompletedProcess(args=['/app/response.sh', '999.999.
+999.999'], returncode=0, stdout='Incident report written: /app/incident_999.999.999.999_20251109T172615Z.txt\n', stderr='').stdout
+
+/tests/test_outputs.py:102: AssertionError
+======================================================================= warnings summary =======================================================================
+../tests/test_outputs.py:112
+  /tests/test_outputs.py:112: SyntaxWarning: invalid escape sequence '\.'
+    reference_script = """#!/bin/bash
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================================================================ PASSES ============================================================================
+______________________________________________________________ test_intrusion_detector_execution _______________________________________________________________
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+Generated: /app/alert.json and /app/report.json
+________________________________________________________________ test_response_script_execution ________________________________________________________________
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+Incident report written: /app/incident_45.32.67.89_20251109T172615Z.txt
+_______________________________________________________________________ test_performance _______________________________________________________________________
+--------------------------------------------------------------------- Captured stdout call ---------------------------------------------------------------------
+Generated: /app/alert.json and /app/report.json
+--------------------------------------------------------------------- Captured stderr call ---------------------------------------------------------------------
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid literal at line 2, column 0
+parse error: Invalid literal at line 2, column 0
+parse error: Invalid literal at line 2, column 0
+parse error: Invalid literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 8
+parse error: Invalid numeric literal at line 1, column 8
+parse error: Invalid numeric literal at line 1, column 8
+parse error: Invalid numeric literal at line 1, column 8
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid literal at line 1, column 4
+parse error: Invalid literal at line 1, column 4
+parse error: Invalid literal at line 1, column 4
+parse error: Invalid literal at line 1, column 4
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 9
+parse error: Invalid numeric literal at line 1, column 9
+parse error: Invalid numeric literal at line 1, column 9
+parse error: Invalid numeric literal at line 1, column 9
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 12
+parse error: Invalid numeric literal at line 1, column 12
+parse error: Invalid numeric literal at line 1, column 12
+parse error: Invalid numeric literal at line 1, column 12
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 6
+parse error: Invalid numeric literal at line 1, column 6
+parse error: Invalid numeric literal at line 1, column 6
+parse error: Invalid numeric literal at line 1, column 6
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 5
+parse error: Invalid numeric literal at line 1, column 5
+parse error: Invalid numeric literal at line 1, column 5
+parse error: Invalid numeric literal at line 1, column 5
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+parse error: Unfinished string at EOF at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+parse error: Invalid numeric literal at line 2, column 0
+/app/reference_impl.sh: line 18: [: : integer expression expected
+parse error: Invalid numeric literal at line 1, column 10
+parse error: Invalid numeric literal at line 1, column 10
+parse error: Invalid numeric literal at line 1, column 10
+parse error: Invalid numeric literal at line 1, column 10
+/app/reference_impl.sh: line 18: [: : integer expression expected
+=================================================================== short test summary info ====================================================================
+PASSED ../tests/test_outputs.py::test_intrusion_detector_exists
+PASSED ../tests/test_outputs.py::test_response_script_exists
+PASSED ../tests/test_outputs.py::test_intrusion_detector_execution
+PASSED ../tests/test_outputs.py::test_response_script_execution
+PASSED ../tests/test_outputs.py::test_performance
+FAILED ../tests/test_outputs.py::test_intrusion_detector_content - AssertionError: Script should use the rules file
+FAILED ../tests/test_outputs.py::test_response_script_error_handling - AssertionError: Script should print error message for invalid IP
+============================================================ 2 failed, 5 passed, 1 warning in 3.17s ============================================================
+root@rack-ge107-ya-20250517193277:/app#
