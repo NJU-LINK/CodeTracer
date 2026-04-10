@@ -35,17 +35,27 @@ class StepRecord:
     step_id: int
     action: str
     observation: str | None = None
+    thinking: str | None = None
+    parallel_group: int | None = None
+    tool_type: str | None = None
     action_ref: FileRef | None = None
     observation_ref: FileRef | None = None
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "step_id": self.step_id,
             "action": self.action,
             "observation": self.observation,
             "action_ref": self.action_ref.to_dict() if self.action_ref else None,
             "observation_ref": self.observation_ref.to_dict() if self.observation_ref else None,
         }
+        if self.thinking is not None:
+            d["thinking"] = self.thinking
+        if self.parallel_group is not None:
+            d["parallel_group"] = self.parallel_group
+        if self.tool_type is not None:
+            d["tool_type"] = self.tool_type
+        return d
 
 
 @dataclass

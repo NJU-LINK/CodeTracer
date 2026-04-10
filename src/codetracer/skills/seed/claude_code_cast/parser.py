@@ -121,6 +121,7 @@ def _messages_to_steps(
 
     Each tool_use block in an assistant message becomes one step.
     The corresponding tool result (matched by tool_call_id) is the observation.
+    Thinking blocks are captured. Parallel tool calls share a parallel_group.
     """
     tool_results: dict[str, str] = {}
     for msg in messages:
@@ -139,6 +140,7 @@ def _messages_to_steps(
 
     steps: list[StepRecord] = []
     step_id = 0
+    group_id = 0
 
     for msg in messages:
         if msg.get("role") != "assistant":
@@ -150,12 +152,21 @@ def _messages_to_steps(
         if not isinstance(content, list):
             continue
 
+        # Extract thinking from this message
+        thinking_text = None
         for block in content:
-            if not isinstance(block, dict):
-                continue
-            if block.get("type") != "tool_use":
-                continue
+            if isinstance(block, dict) and block.get("type") == "thinking":
+                thinking_text = block.get("thinking", block.get("text", ""))
+                break
 
+        # Count tool_use blocks to detect parallel calls
+        tool_blocks = [b for b in content if isinstance(b, dict) and b.get("type") == "tool_use"]
+        is_parallel = len(tool_blocks) > 1
+        if is_parallel:
+            group_id += 1
+        current_group = group_id if is_parallel else None
+
+        for block in tool_blocks:
             step_id += 1
             name = block.get("name", "unknown")
             inp = block.get("input", {})
@@ -184,10 +195,15 @@ def _messages_to_steps(
                     step_id=step_id,
                     action=action,
                     observation=observation,
+                    thinking=thinking_text,
+                    parallel_group=current_group,
+                    tool_type=name,
                     action_ref=action_ref,
                     observation_ref=obs_ref,
                 )
             )
+            # Only attach thinking to the first step in a group
+            thinking_text = None
 
     return steps
 
@@ -209,14 +225,51 @@ def _format_action(tool_name: str, inp: dict[str, Any]) -> str:
         return f"[Glob] {inp.get('pattern', '')}"
     if tool_name == "Grep":
         return f"[Grep] {inp.get('pattern', '')} in {inp.get('path', '.')}"
-    if tool_name in ("TodoWrite", "TodoRead"):
-        return f"[{tool_name}]"
+    if tool_name == "Agent":
+        return f"[Agent/{inp.get('subagent_type', 'general')}] {inp.get('description', inp.get('prompt', '')[:150])}"
+    if tool_name == "NotebookEdit":
+        mode = inp.get("edit_mode", "replace")
+        return f"[NotebookEdit:{mode}] {inp.get('notebook_path', '')} cell {inp.get('cell_number', inp.get('cell_id', ''))}"
+    if tool_name == "WebSearch":
+        return f"[WebSearch] {inp.get('query', '')}"
     if tool_name == "WebFetch":
         return f"[WebFetch] {inp.get('url', '')}"
+    if tool_name == "EnterWorktree":
+        return f"[EnterWorktree] {inp.get('name', '')}"
+    if tool_name == "ExitWorktree":
+        return f"[ExitWorktree] {inp.get('action', '')}"
+    if tool_name == "EnterPlanMode":
+        return "[EnterPlanMode]"
+    if tool_name == "ExitPlanMode":
+        return "[ExitPlanMode]"
+    if tool_name == "Skill":
+        return f"[Skill] {inp.get('skill', '')} {inp.get('args', '')}"
+    if tool_name == "AskUserQuestion":
+        questions = inp.get("questions", [])
+        q_text = questions[0].get("question", "") if questions else ""
+        return f"[AskUserQuestion] {q_text[:150]}"
+    if tool_name == "SendMessage":
+        return f"[SendMessage] to={inp.get('to', '')} {inp.get('content', '')[:100]}"
+    if tool_name in ("TodoWrite", "TodoRead"):
+        return f"[{tool_name}]"
+    if tool_name == "TaskOutput":
+        return f"[TaskOutput] task_id={inp.get('task_id', '')}"
+    if tool_name == "TaskStop":
+        return f"[TaskStop] task_id={inp.get('task_id', '')}"
+    if tool_name == "CronCreate":
+        return f"[CronCreate] {inp.get('cron', '')} -> {inp.get('prompt', '')[:100]}"
+    if tool_name == "CronDelete":
+        return f"[CronDelete] id={inp.get('id', '')}"
+    if tool_name == "CronList":
+        return "[CronList]"
+    if tool_name == "PowerShell":
+        return f"[PowerShell] {inp.get('command', '')}"
+    if tool_name in ("FileRead", "FileWrite", "FileEdit"):
+        return f"[{tool_name}] {inp.get('file_path', '')}"
+    if tool_name == "BashOutput":
+        return f"[BashOutput] {inp.get('bash_id', inp.get('task_id', ''))}"
     if tool_name == "Task":
         return f"[Task/{inp.get('subagent_type', '')}] {inp.get('description', '')}"
-    if tool_name == "BashOutput":
-        return f"[BashOutput] {inp.get('bash_id', '')}"
     return f"[{tool_name}] {json.dumps(inp, ensure_ascii=False)[:200]}"
 
 

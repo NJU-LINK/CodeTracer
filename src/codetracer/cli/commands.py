@@ -47,7 +47,7 @@ def analyze(
     traj_annotation_path: Path | None = typer.Option(None, "--traj-annotation-path", help="Path to annotation JSON"),
     annotation_base: Path | None = typer.Option(None, "--annotation-base", help="Root dir for annotation_relpath"),
     skip_sandbox: bool = typer.Option(False, "--skip-sandbox", help="Skip sandbox creation"),
-    profile: str | None = typer.Option(None, "--profile", "-p", help="Output profile: tracebench (default) or detailed"),
+    profile: str | None = typer.Option(None, "--profile", "-p", help="Output profile: detailed (default), tracebench, or rl_feedback"),
     mode: str = typer.Option("benchmark", "--mode", help="Mode: benchmark (one-shot) or interactive (REPL)"),
 ) -> Any:
     if mode == "interactive":
@@ -63,12 +63,12 @@ def analyze(
 
     from codetracer.agents.context import ContextAssembler
     from codetracer.agents.trace_agent import TraceAgent
+    from codetracer.discovery.explorer import detect_or_generate_skill
     from codetracer.llm.client import LLMClient
     from codetracer.models.task import TaskContext
     from codetracer.query.config import load_config
     from codetracer.query.normalizer import Normalizer
     from codetracer.query.tree_builder import TreeBuilder
-    from codetracer.skills.generator import SkillGenerator
     from codetracer.skills.pool import SkillPool
 
     run_dir = run_dir.resolve()
@@ -117,24 +117,31 @@ def analyze(
     normalizer = Normalizer(pool)
     skill = None
 
-    if normalizer.is_pre_normalized(run_dir):
-        console.print("Pre-normalized directory (steps.json found)")
-        traj = normalizer.normalize_pre_normalized(run_dir, output_dir=work_dir)
-    elif normalizer.is_step_jsonl_dir(run_dir):
-        console.print("Annotation directory (step_N.jsonl files found)")
-        traj = normalizer.normalize_step_jsonl(run_dir, output_dir=work_dir)
-    else:
-        try:
+    if skip_discovery:
+        # No auto-generation; fail on unknown format
+        if normalizer.is_pre_normalized(run_dir):
+            console.print("Pre-normalized directory (steps.json found)")
+            traj = normalizer.normalize_pre_normalized(run_dir, output_dir=work_dir)
+        elif normalizer.is_step_jsonl_dir(run_dir):
+            console.print("Annotation directory (step_N.jsonl files found)")
+            traj = normalizer.normalize_step_jsonl(run_dir, output_dir=work_dir)
+        else:
             skill = normalizer.detect(run_dir, format_override)
             console.print(f"Detected format: [bold green]{skill.name}[/bold green]")
-        except ValueError:
-            if skip_discovery:
-                raise typer.BadParameter(f"Unknown format in {run_dir} and --skip-discovery is set")
-            console.print("[yellow]Unknown format -- running skill generator...[/yellow]")
-            generator = SkillGenerator(llm, pool, config.get("discovery", {}))
-            skill = generator.generate(run_dir, user_skill_dir)
-            console.print(f"[green]Generated skill:[/green] {skill.name}")
-        traj = normalizer.normalize(run_dir, skill, output_dir=work_dir)
+            traj = normalizer.normalize(run_dir, skill, output_dir=work_dir)
+    else:
+        try:
+            skill, traj = detect_or_generate_skill(
+                run_dir, normalizer, pool, llm, config,
+                user_skill_dir=user_skill_dir,
+                format_override=format_override,
+            )
+            if skill:
+                console.print(f"Detected format: [bold green]{skill.name}[/bold green]")
+            else:
+                console.print("Pre-normalized / annotation directory")
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc)) from exc
 
     if dry_run:
         console.print("[yellow]--dry-run: stopping before trace.[/yellow]")
@@ -161,6 +168,7 @@ def analyze(
         console.print(f"Built tree index -> [bold]{tree_md_path}[/bold]")
 
     from codetracer.plugins.hooks import MEMORY_EXTRACTION, default_hooks
+    from codetracer.services.complexity import estimate_complexity
     from codetracer.services.cost_tracker import CostTracker
     from codetracer.services.memory import auto_extract_memory, load_memory
     from codetracer.state.output_profile import get_default_profile_name, load_profile
@@ -172,6 +180,14 @@ def analyze(
     cost_tracker = CostTracker(budget_limit_usd=cost_limit)
     memory_text = load_memory(fmt_name)
 
+    complexity = estimate_complexity(traj)
+    traj_meta = {
+        "complexity_tier": complexity.complexity_tier,
+        "adaptive_instructions": complexity.adaptive_instructions,
+        "step_count": complexity.step_count,
+        "unique_tool_types": complexity.unique_tool_types,
+    }
+
     output_path = output or write_base / out_profile.output_file
     assembler = ContextAssembler(config, pool)
     agent = TraceAgent(
@@ -179,8 +195,9 @@ def analyze(
         artifacts_dir=work_dir,
         cost_tracker=cost_tracker,
         profile=out_profile,
+        agent_type=fmt_name,
     )
-    result = agent.run(skill, task_ctx=task_ctx, memory_text=memory_text)
+    result = agent.run(skill, task_ctx=task_ctx, memory_text=memory_text, traj_metadata=traj_meta)
     console.print(f"Trace finished: [bold]{result}[/bold]")
     console.print(cost_tracker.format_summary())
 
@@ -346,7 +363,7 @@ def interactive(
     api_key: str | None = typer.Option(None, "--api-key", help="API key"),
     config_path: Path | None = typer.Option(None, "-c", "--config", help="Path to YAML config override"),
     resume: bool = typer.Option(False, "--resume", help="Resume a previous interactive session"),
-    profile: str | None = typer.Option(None, "--profile", "-p", help="Output profile: tracebench or detailed (default)"),
+    profile: str | None = typer.Option(None, "--profile", "-p", help="Output profile: detailed (default), tracebench, or rl_feedback"),
 ) -> Any:
     from codetracer.cli.repl import interactive_repl
     interactive_repl(
@@ -371,17 +388,17 @@ def run(
     auto_replay: bool = typer.Option(False, "--replay", "-r", help="Auto-replay from the first incorrect step"),
     output: Path | None = typer.Option(None, "-o", "--output", help="Output labels JSON path"),
     skip_discovery: bool = typer.Option(False, "--skip-discovery", help="Fail if format is unknown"),
-    profile: str | None = typer.Option(None, "--profile", "-p", help="Output profile: tracebench (default) or detailed"),
+    profile: str | None = typer.Option(None, "--profile", "-p", help="Output profile: detailed (default), tracebench, or rl_feedback"),
 ) -> Any:
     from platformdirs import user_config_dir
 
     from codetracer.agents.context import ContextAssembler
     from codetracer.agents.trace_agent import TraceAgent
+    from codetracer.discovery.explorer import detect_or_generate_skill
     from codetracer.llm.client import LLMClient
     from codetracer.query.config import load_config
     from codetracer.query.normalizer import Normalizer
     from codetracer.query.tree_builder import TreeBuilder
-    from codetracer.skills.generator import SkillGenerator
     from codetracer.skills.pool import SkillPool
 
     run_dir = run_dir.resolve()
@@ -406,24 +423,29 @@ def run(
     # 1. Normalize
     console.print("[bold]Step 1/4: Detecting format and normalizing...[/bold]")
     skill = None
-    if normalizer.is_pre_normalized(run_dir):
-        traj = normalizer.normalize_pre_normalized(run_dir)
-        console.print("  Pre-normalized directory (steps.json found)")
-    elif normalizer.is_step_jsonl_dir(run_dir):
-        traj = normalizer.normalize_step_jsonl(run_dir)
-        console.print("  Annotation directory (step_N.jsonl files found)")
-    else:
-        try:
+    if skip_discovery:
+        if normalizer.is_pre_normalized(run_dir):
+            traj = normalizer.normalize_pre_normalized(run_dir)
+            console.print("  Pre-normalized directory (steps.json found)")
+        elif normalizer.is_step_jsonl_dir(run_dir):
+            traj = normalizer.normalize_step_jsonl(run_dir)
+            console.print("  Annotation directory (step_N.jsonl files found)")
+        else:
             skill = normalizer.detect(run_dir)
             console.print(f"  Detected format: [bold green]{skill.name}[/bold green]")
-        except ValueError:
-            if skip_discovery:
-                raise typer.BadParameter(f"Unknown format in {run_dir} and --skip-discovery is set")
-            console.print("[yellow]  Unknown format -- running skill generator...[/yellow]")
-            generator = SkillGenerator(llm, pool, config.get("discovery", {}))
-            skill = generator.generate(run_dir, user_skill_dir)
-            console.print(f"  [green]Generated skill:[/green] {skill.name}")
-        traj = normalizer.normalize(run_dir, skill)
+            traj = normalizer.normalize(run_dir, skill)
+    else:
+        try:
+            skill, traj = detect_or_generate_skill(
+                run_dir, normalizer, pool, llm, config,
+                user_skill_dir=user_skill_dir,
+            )
+            if skill:
+                console.print(f"  Detected format: [bold green]{skill.name}[/bold green]")
+            else:
+                console.print("  Pre-normalized / annotation directory")
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc)) from exc
 
     # 2. Build tree
     console.print("[bold]Step 2/4: Building tree index...[/bold]")
@@ -436,6 +458,7 @@ def run(
 
     # 3. Analyze
     from codetracer.plugins.hooks import MEMORY_EXTRACTION, default_hooks
+    from codetracer.services.complexity import estimate_complexity
     from codetracer.services.cost_tracker import CostTracker
     from codetracer.services.memory import auto_extract_memory, load_memory
     from codetracer.state.output_profile import get_default_profile_name, load_profile
@@ -446,6 +469,14 @@ def run(
     cost_tracker = CostTracker(budget_limit_usd=cost_limit)
     memory_text = load_memory(fmt_name)
 
+    complexity = estimate_complexity(traj)
+    traj_meta = {
+        "complexity_tier": complexity.complexity_tier,
+        "adaptive_instructions": complexity.adaptive_instructions,
+        "step_count": complexity.step_count,
+        "unique_tool_types": complexity.unique_tool_types,
+    }
+
     console.print("[bold]Step 3/4: Running error analysis...[/bold]")
     output_path = output or run_dir / out_profile.output_file
     assembler = ContextAssembler(config, pool)
@@ -453,8 +484,9 @@ def run(
         llm, assembler, run_dir, output_path, config,
         cost_tracker=cost_tracker,
         profile=out_profile,
+        agent_type=fmt_name,
     )
-    result = agent.run(skill, memory_text=memory_text)
+    result = agent.run(skill, memory_text=memory_text, traj_metadata=traj_meta)
 
     traj_path = output_path.parent / (output_path.stem + ".traj.json")
     agent.save_trajectory(traj_path)

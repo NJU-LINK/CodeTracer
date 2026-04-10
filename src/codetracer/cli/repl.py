@@ -987,7 +987,8 @@ def _run_analyze(store: Any) -> Any:
 
     output_path = s.run_dir / "codetracer_labels.json"
     assembler = ContextAssembler(s.config, pool)
-    agent = TraceAgent(s.llm, assembler, s.run_dir, output_path, s.config)
+    agent = TraceAgent(s.llm, assembler, s.run_dir, output_path, s.config,
+                       agent_type=s.skill.name if s.skill else "pre_normalized")
 
     with console.status("[dim]Running trace agent...[/]", spinner="dots", spinner_style="dim"):
         agent.run(s.skill)

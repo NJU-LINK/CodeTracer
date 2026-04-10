@@ -34,10 +34,11 @@ class ContextAssembler:
         profile: Any | None = None,
         memory_text: str = "",
         budget_context: str = "",
+        traj_metadata: dict[str, Any] | None = None,
     ) -> list[dict[str, str]]:
         """Build [system, user] messages for the trace (diagnosis) agent.
 
-        Uses layered prompt composition: base system + profile + memory + budget.
+        Uses layered prompt composition: base system + adaptive + profile + memory + budget.
         """
         trace_cfg = self._config.get("trace", {})
         read_dir = artifacts_dir or run_dir
@@ -56,6 +57,8 @@ class ContextAssembler:
             "skill_name": skill.name if skill else "pre_normalized",
             "task_dir": str(sandbox) if sandbox else "",
             "task_name": task_ctx.task_name if task_ctx else "",
+            "output_file": getattr(profile, "output_file", "codetracer_labels.json") if profile else "codetracer_labels.json",
+            "profile_finalize_instruction": getattr(profile, "finalize_instruction", "") if profile else "",
             "exploration_instructions": (
                 task_ctx.exploration_instructions(sandbox) if task_ctx and sandbox else ""
             ),
@@ -64,6 +67,7 @@ class ContextAssembler:
 
         layers = [
             self._render_base_system(trace_cfg, template_vars),
+            self._render_adaptive_layer(traj_metadata),
             self._render_profile_instructions(profile),
             self._render_memory_layer(memory_text),
             self._render_budget_layer(budget_context),
@@ -107,6 +111,16 @@ class ContextAssembler:
         trace_cfg: dict[str, Any], template_vars: dict[str, Any]
     ) -> str:
         return _render(trace_cfg.get("system_template", ""), **template_vars)
+
+    @staticmethod
+    def _render_adaptive_layer(traj_metadata: dict[str, Any] | None) -> str:
+        if not traj_metadata:
+            return ""
+        instructions = traj_metadata.get("adaptive_instructions", "")
+        if not instructions:
+            return ""
+        tier = traj_metadata.get("complexity_tier", "unknown")
+        return f"== Adaptive Analysis ({tier} trajectory) ==\n{instructions}"
 
     @staticmethod
     def _render_profile_instructions(profile: Any | None) -> str:

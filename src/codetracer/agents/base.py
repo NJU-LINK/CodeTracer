@@ -69,6 +69,7 @@ class BaseAgent:
         hooks: HookManager | None = None,
         cost_tracker: CostTracker | None = None,
         compact_manager: CompactManager | None = None,
+        online_memory: Any | None = None,
     ) -> None:
         self._llm = llm
         self._executor = executor
@@ -100,6 +101,8 @@ class BaseAgent:
                 buffer_tokens=int(ctx_cfg.get("buffer_tokens", 13_000)),
                 max_failures=int(ctx_cfg.get("max_consecutive_failures", 3)),
             )
+
+        self._online_memory = online_memory
 
     # ------------------------------------------------------------------
     # Public API
@@ -221,6 +224,22 @@ class BaseAgent:
             )
 
         observation = self._render(self._observation_template, output=output)
+
+        # Disk persistence for very large outputs: save full output to file,
+        # include reference in observation so the agent can re-read if needed.
+        raw_out = output.get("output", "")
+        if len(raw_out) > 100_000 and hasattr(self._executor, '_work_dir'):
+            spill_path = self._executor._work_dir / f".tracer_output_step{step_num}.txt"
+            try:
+                spill_path.write_text(raw_out, encoding="utf-8")
+                observation += (
+                    f"\n<large_output_persisted path=\"{spill_path}\">"
+                    f"Full output ({len(raw_out)} chars) saved to {spill_path.name}. "
+                    f"Use `cat {spill_path.name}` to re-read.</large_output_persisted>"
+                )
+            except OSError:
+                pass  # best-effort persistence
+
         self._add("user", observation)
 
         first_line = output.get("output", "").lstrip().splitlines()
@@ -233,6 +252,13 @@ class BaseAgent:
             raise Submitted(raw_output)
 
         self._hooks.emit("step_complete", step=step_num, final=False)
+
+        # Online memory: extract insights periodically during analysis
+        if self._online_memory is not None:
+            total_tokens = (self._llm.total_prompt_tokens or 0) + (self._llm.total_completion_tokens or 0)
+            if self._online_memory.should_extract(step_num, total_tokens):
+                self._online_memory.extract_async(self._messages, step_num, total_tokens)
+
         yield AgentEvent("step_complete", {"step": step_num, "final": False})
 
     # ------------------------------------------------------------------
@@ -314,20 +340,9 @@ class BaseAgent:
 
 _DEFAULT_OBS_TEMPLATE = """\
 <returncode>{{ output.returncode }}</returncode>
-{% if output.output | length < 10000 -%}
 <output>
 {{ output.output -}}
 </output>
-{%- else -%}
-<warning>Output too long.</warning>
-<output_head>
-{{ output.output[:5000] }}
-</output_head>
-<elided>{{ output.output | length - 10000 }} chars elided</elided>
-<output_tail>
-{{ output.output[-5000:] }}
-</output_tail>
-{%- endif -%}
 """
 
 _DEFAULT_FMT_ERR = (
@@ -336,5 +351,5 @@ _DEFAULT_FMT_ERR = (
 
 _DEFAULT_TIMEOUT = """\
 Command timed out: {{ action['action'] }}
-{% if output | length < 10000 %}Output: {{ output }}{% else %}Output (truncated): {{ output[:3000] }}{% endif %}
+Output: {{ output }}
 """

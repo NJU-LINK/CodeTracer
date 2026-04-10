@@ -100,6 +100,36 @@ _BUILTIN_PROFILES: dict[str, dict[str, Any]] = {
             "required": ["root_cause_chain", "critical_decision_points", "correct_strategy", "stage_labels", "summary"],
         },
     },
+    "rl_feedback": {
+        "schema_ref": "rl_feedback",
+        "finalize_instruction": (
+            "Output codetracer_rl_feedback.json with per-step deviation analysis. "
+            "Each entry must include: step_id (int), verdict (incorrect|unuseful|correct), "
+            "deviation_type (wrong_tool|wrong_target|redundant|premature_conclusion|"
+            "missing_exploration|none), correct_alternative (str, what the agent should "
+            "have done), impact_severity (critical|moderate|minor|none), reasoning (str), "
+            "reward_signal (float, -1.0 to 1.0). Include ALL steps, not just erroneous "
+            "ones. Correct steps should have verdict=correct, deviation_type=none, "
+            "reward_signal between 0.0 and 1.0."
+        ),
+        "output_file": "codetracer_rl_feedback.json",
+        "json_schema": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "step_id": {"type": "integer"},
+                    "verdict": {"type": "string", "enum": ["incorrect", "unuseful", "correct"]},
+                    "deviation_type": {"type": "string"},
+                    "correct_alternative": {"type": "string"},
+                    "impact_severity": {"type": "string", "enum": ["critical", "moderate", "minor", "none"]},
+                    "reasoning": {"type": "string"},
+                    "reward_signal": {"type": "number", "minimum": -1.0, "maximum": 1.0},
+                },
+                "required": ["step_id", "verdict", "deviation_type", "reasoning", "reward_signal"],
+            },
+        },
+    },
 }
 
 
@@ -125,5 +155,5 @@ def load_profile(name: str, config: dict[str, Any] | None = None) -> OutputProfi
 
 def get_default_profile_name(config: dict[str, Any] | None = None) -> str:
     if config:
-        return config.get("output", {}).get("default_profile", "tracebench")
-    return "tracebench"
+        return config.get("output", {}).get("default_profile", "detailed")
+    return "detailed"

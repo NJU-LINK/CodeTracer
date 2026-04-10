@@ -2,6 +2,11 @@
 
 When the conversation history approaches the model's context window limit,
 the CompactManager summarises earlier messages so analysis can continue.
+
+Fallback hierarchy:
+  1. LLM-based summarization (primary)
+  2. Sliding window: drop oldest non-system message pairs (when LLM fails)
+  3. Never permanently disabled — always has a fallback path
 """
 
 from __future__ import annotations
@@ -53,7 +58,12 @@ def _format_compact_summary(raw: str) -> str:
 
 
 class CompactManager:
-    """Manages context-window compaction for agent conversations."""
+    """Manages context-window compaction for agent conversations.
+
+    Primary: LLM-based summarization.
+    Fallback: sliding window that drops oldest non-system message pairs.
+    Never permanently disables — always has a path to reduce context.
+    """
 
     def __init__(
         self,
@@ -79,8 +89,6 @@ class CompactManager:
     def should_compact(self, messages: list[dict[str, Any]]) -> bool:
         if not self.enabled:
             return False
-        if self._consecutive_failures >= self._max_failures:
-            return False
         tokens = estimate_tokens(messages)
         return tokens >= self._threshold
 
@@ -91,43 +99,94 @@ class CompactManager:
     ) -> list[dict[str, Any]]:
         """Summarize *messages* and return a shorter replacement list.
 
-        Keeps the original system message and replaces everything else
-        with a single user message containing the summary, followed by
-        an assistant acknowledgement.
+        Primary: LLM summarization (keeps system + summary).
+        Fallback: sliding window drop when LLM fails too many times.
         """
-        try:
-            summary_resp = llm.query(
-                messages + [{"role": "user", "content": COMPACT_PROMPT}],
-            )
-            summary_text = _format_compact_summary(summary_resp.get("content", ""))
+        # Try LLM summarization if not in failure streak
+        if self._consecutive_failures < self._max_failures:
+            try:
+                summary_resp = llm.query(
+                    messages + [{"role": "user", "content": COMPACT_PROMPT}],
+                )
+                summary_text = _format_compact_summary(summary_resp.get("content", ""))
 
-            system_msgs = [m for m in messages if m.get("role") == "system"]
-            compacted: list[dict[str, Any]] = list(system_msgs) + [
-                {"role": "user", "content": summary_text},
-                {
-                    "role": "assistant",
-                    "content": (
-                        "Understood. I have reviewed the summary of our prior analysis. "
-                        "I will continue from where we left off."
-                    ),
-                },
-            ]
-            self._consecutive_failures = 0
-            self._compact_count += 1
-            logger.info(
-                "Compacted %d messages -> %d (compact #%d)",
-                len(messages),
-                len(compacted),
-                self._compact_count,
-            )
-            return compacted
+                system_msgs = [m for m in messages if m.get("role") == "system"]
+                compacted: list[dict[str, Any]] = list(system_msgs) + [
+                    {"role": "user", "content": summary_text},
+                    {
+                        "role": "assistant",
+                        "content": (
+                            "Understood. I have reviewed the summary of our prior analysis. "
+                            "I will continue from where we left off."
+                        ),
+                    },
+                ]
+                self._consecutive_failures = 0
+                self._compact_count += 1
+                logger.info(
+                    "Compacted %d messages -> %d (compact #%d)",
+                    len(messages),
+                    len(compacted),
+                    self._compact_count,
+                )
+                return compacted
 
-        except Exception:
-            self._consecutive_failures += 1
-            logger.warning(
-                "Compact failed (%d/%d consecutive failures)",
-                self._consecutive_failures,
-                self._max_failures,
-                exc_info=True,
-            )
+            except Exception:
+                self._consecutive_failures += 1
+                logger.warning(
+                    "Compact LLM summarization failed (%d/%d consecutive failures), "
+                    "falling back to sliding window",
+                    self._consecutive_failures,
+                    self._max_failures,
+                    exc_info=True,
+                )
+
+        # Fallback: sliding window — drop oldest non-system message pairs
+        return self._sliding_window_compact(messages)
+
+    def _sliding_window_compact(
+        self, messages: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Drop oldest non-system messages until under threshold.
+
+        Preserves system messages and the most recent messages. Drops
+        from the oldest non-system messages first, removing in pairs
+        (user + assistant) to maintain role alternation.
+        """
+        system_msgs = [m for m in messages if m.get("role") == "system"]
+        non_system = [m for m in messages if m.get("role") != "system"]
+
+        if len(non_system) <= 4:
+            # Too few messages to drop — nothing we can do
+            logger.warning("Sliding window fallback: too few messages to compact")
             return messages
+
+        # Drop ~40% of oldest non-system messages (at least 2)
+        drop_count = max(2, len(non_system) * 2 // 5)
+        # Ensure we drop in pairs for role alternation
+        drop_count = drop_count + (drop_count % 2)
+
+        kept = non_system[drop_count:]
+        dropped_summary = (
+            f"[Sliding Window Compact — dropped {drop_count} oldest messages "
+            f"to free context. {len(kept)} messages retained.]"
+        )
+
+        compacted = list(system_msgs) + [
+            {"role": "user", "content": dropped_summary},
+            {
+                "role": "assistant",
+                "content": "Understood. Continuing analysis with recent context.",
+            },
+        ] + kept
+
+        self._compact_count += 1
+        # Reset failure count so LLM summarization is tried again next time
+        self._consecutive_failures = 0
+        logger.info(
+            "Sliding window compact: dropped %d messages, kept %d (compact #%d)",
+            drop_count,
+            len(kept),
+            self._compact_count,
+        )
+        return compacted
