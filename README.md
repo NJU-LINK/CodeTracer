@@ -1,196 +1,143 @@
-# CodeTracer
+<p align="center">
+<pre align="center">
+<b>
+   ██████╗ ██████╗ ██████╗ ███████╗████████╗██████╗  █████╗  ██████╗███████╗██████╗
+  ██╔════╝██╔═══██╗██╔══██╗██╔════╝╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗
+  ██║     ██║   ██║██║  ██║█████╗     ██║   ██████╔╝███████║██║     █████╗  ██████╔╝
+  ██║     ██║   ██║██║  ██║██╔══╝     ██║   ██╔══██╗██╔══██║██║     ██╔══╝  ██╔══██╗
+  ╚██████╗╚██████╔╝██████╔╝███████╗   ██║   ██║  ██║██║  ██║╚██████╗███████╗██║  ██║
+   ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝  ╚═╝
+</b>
+</pre>
+</p>
 
-Self-evolving agent trajectory diagnosis system. CodeTracer analyzes agent trajectories step-by-step, identifies incorrect and unuseful actions, and produces structured error labels.
+<p align="center">
+  <b>Self-Evolving Agent Trajectory Diagnosis System</b>
+</p>
 
-## Installation
+<p align="center">
+  <a href="https://arxiv.org/abs/2502.xxxxx"><img src="https://img.shields.io/badge/arXiv-2502.xxxxx-b31b1b.svg?style=flat-square" alt="arXiv"></a>
+  <a href="https://huggingface.co/datasets/Contextbench/Tracebench"><img src="https://img.shields.io/badge/🤗-Tracebench-yellow.svg?style=flat-square" alt="Dataset"></a>
+  <a href="https://pypi.org/project/codetracer/"><img src="https://img.shields.io/pypi/v/codetracer.svg?style=flat-square&logo=pypi&logoColor=white" alt="PyPI"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat-square" alt="License"></a>
+  <a href="https://github.com/NJU-LINK/CodeTracer/actions"><img src="https://img.shields.io/github/actions/workflow/status/NJU-LINK/CodeTracer/ci.yml?branch=main&style=flat-square&logo=github" alt="CI"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick Start</a> &bull;
+  <a href="#tracebench">Tracebench</a> &bull;
+  <a href="#supported-agents">Supported Agents</a> &bull;
+  <a href="#configuration">Configuration</a> &bull;
+  <a href="#citation">Citation</a>
+</p>
+
+---
+
+**CodeTracer** analyzes agent execution trajectories step-by-step, identifies *incorrect* and *unuseful* actions, and produces structured diagnostic labels. It operates as an autonomous diagnosis agent — navigating trajectory environments, inspecting evidence, and building root-cause chains — with cross-trajectory memory that accumulates experience over time.
+
+## Highlights
+
+- **Autonomous Diagnosis Agent** — Iteratively explores trajectory data, inspects steps, gathers evidence, and produces structured error labels with full reasoning chains
+- **Deep Recursive Discovery** — Three-phase trajectory discovery (marker scan → child preference → LLM-guided analysis) handles arbitrarily nested and messy data archives
+- **Auto-Skill Generation** — Unknown trajectory formats are automatically parsed via LLM-generated skills; no manual parser authoring required
+- **Cross-Trajectory Memory** — Online memory extraction during analysis accumulates agent-specific failure patterns and investigation strategies across runs
+- **Resilient Context Management** — Two-tier compaction (LLM summarization → sliding window fallback) ensures analysis never stalls from context overflow
+- **Replay Engine** — Resume failed trajectories from diagnosed breakpoints with corrective strategies injected
+- **Interactive REPL** — Step-by-step trajectory inspection with an interactive CLI
+
+## Quick Start
+
+### Installation
 
 ```bash
-cd tracer
+git clone https://github.com/NJU-LINK/CodeTracer.git
+cd CodeTracer
 pip install -e .
 ```
 
-Set environment variables for your LLM endpoint:
+### Configure LLM
 
 ```bash
-export CODETRACER_API_BASE="http://your-api-endpoint/v1"
+export CODETRACER_API_BASE="https://api.openai.com/v1"
 export CODETRACER_API_KEY="your-api-key"
 ```
 
-## Evaluating on Tracebench
+### Analyze a Trajectory
 
-[Tracebench](https://huggingface.co/datasets/Contextbench/Tracebench) is a benchmark of 4316 agent trajectories with human-verified step-level annotations for trajectory diagnosis evaluation.
+```bash
+# Single trajectory
+codetracer analyze /path/to/trajectory/ \
+  --model gpt-4o \
+  --profile detailed
 
-| Split | Rows | Description |
-|-------|------|-------------|
-| `verified` | 1000 | Curated subset (489 SWE-bench + 511 terminal) |
-| `full` | 3316 | All trajectories |
+# Batch analysis
+codetracer-batch \
+  --manifest bench_manifest.verified.jsonl \
+  --parallel 4 \
+  --model gpt-4o
+```
+
+### Interactive REPL
+
+```bash
+codetracer repl /path/to/trajectory/
+```
+
+## Core Modules
+
+| Module | Description |
+|--------|-------------|
+| `discovery.explorer` | Three-phase recursive trajectory discovery with LLM-guided fallback |
+| `agents.trace_agent` | Autonomous diagnosis loop with bash execution in trajectory environments |
+| `agents.compact` | Two-tier context management (LLM summarization + sliding window) |
+| `services.memory` | Cross-trajectory memory with online mid-analysis extraction |
+| `skills.*` | Pluggable format parsers with auto-generation for unknown formats |
+| `agents.replay` | Replay engine for resuming trajectories from diagnosed breakpoints |
+| `query.normalizer` | Unified trajectory normalization across all supported formats |
+| `query.tree_builder` | Step classification tree construction (change/explore labeling) |
+
+## Tracebench
+
+[**Tracebench**](https://huggingface.co/datasets/Contextbench/Tracebench) is a benchmark of 4,316 agent trajectories with human-verified step-level annotations for trajectory diagnosis evaluation.
+
+| Split | Trajectories | Description |
+|-------|-------------|-------------|
+| `verified` | 1,000 | Curated subset (489 SWE-bench + 511 TerminalBench) |
+| `full` | 3,316 | All trajectories across agents and models |
+
+### Quick Evaluation
+
+```bash
+# Download and extract
+huggingface-cli download Contextbench/Tracebench \
+  --repo-type dataset \
+  --local-dir ./tracebench_data
+
+# Run on verified split
+codetracer-batch \
+  --manifest tracebench_data/bench_manifest.verified.jsonl \
+  --model gpt-4o \
+  --parallel 4 \
+  --output outputs/
+```
 
 ### Dataset Fields
 
-Each manifest entry contains these fields. The ones used by CodeTracer are marked with `*`:
-
 | Field | Description |
 |-------|-------------|
-| `traj_id` * | Unique trajectory identifier, used as output directory name |
-| `annotation_relpath` * | Relative path to step annotation files (`step_N.jsonl`, `stage_ranges.json`) |
-| `artifact_path` * | Path to the `.tar.zst` artifact containing the raw traj folder |
-| `agent` | Agent name: `mini-SWE-agent`, `OpenHands`, `Terminus2`, `SWE-agent` |
-| `model` | Model identifier (e.g. `OpenAI/GPT-5`, `Anthropic/Claude-Sonnet-4-20250514-Thinking`) |
-| `stages` | Ground-truth stage ranges (`[{stage_id, start_step_id, end_step_id}]`) |
-| `incorrect_stages` * | Per-stage incorrect/unuseful step annotations (evaluation ground truth) |
+| `traj_id` | Unique trajectory identifier |
+| `agent` | Agent name (`mini-SWE-agent`, `OpenHands`, `Terminus2`, `SWE-agent`) |
+| `model` | Model identifier |
+| `stages` | Ground-truth stage ranges |
+| `incorrect_stages` | Per-stage incorrect/unuseful step annotations |
 | `solved` | Whether the agent solved the task |
 | `step_count` | Total number of steps |
-| `category` | Task category (e.g. `software-engineering`) |
 | `difficulty` | `easy` / `medium` / `hard` |
 
-### Step 1: Load the Manifest
+### Output Format
 
-**From HuggingFace:**
-
-```python
-from datasets import load_dataset
-
-ds = load_dataset("Contextbench/Tracebench", split="verified")
-entry = ds[0]
-print(entry["traj_id"], entry["agent"], entry["model"])
-```
-
-**From local JSONL:**
-
-```python
-import json
-
-with open("bench_manifest.verified.jsonl") as f:
-    entries = [json.loads(line) for line in f]
-
-entry = entries[0]
-```
-
-### Step 2: Download and Extract the Artifact
-
-Each entry's `artifact_path` points to a `.tar.zst` archive containing the raw trajectory folder (sessions, agent-logs, results.json, etc.).
-
-```bash
-# Download from HuggingFace (if not local)
-huggingface-cli download Contextbench/Tracebench \
-  --repo-type dataset \
-  --include "bench_artifacts/full/<filename>.tar.zst" \
-  --local-dir ./tracebench_data
-
-# Extract
-mkdir -p workspace
-tar --zstd -xf tracebench_data/<artifact_path> -C workspace/
-```
-
-After extraction, the directory structure looks like:
-
-```
-workspace/<traj_id>/
-  results.json            # task metadata and test results
-  commands.txt            # (miniswe) keystroke log
-  agent-logs/
-    mini.traj.json        # (miniswe) structured trajectory
-  sessions/
-    agent.log             # agent session log
-    agent.cast            # asciinema recording
-    tests.log             # test output
-```
-
-The exact layout varies by agent type. CodeTracer auto-detects the format via its skill system.
-
-### Step 3: Prepare the Annotation File
-
-CodeTracer uses the manifest entry's stage/step annotations to build its analysis tree. Save the entry as a JSON file:
-
-```python
-import json
-
-item = {
-    "traj_id": entry["traj_id"],
-    "annotation": {
-        "stages": entry["stages"],
-        "incorrect_stages": entry["incorrect_stages"],
-    }
-}
-
-with open(f"workspace/{entry['traj_id']}.annotation.json", "w") as f:
-    json.dump(item, f)
-```
-
-### Step 4: Run CodeTracer on a Single Trajectory
-
-```bash
-codetracer analyze workspace/<traj_id>/ \
-  --model <your-model> \
-  --api-base "$CODETRACER_API_BASE" \
-  --api-key "$CODETRACER_API_KEY" \
-  --output-dir outputs \
-  --traj-id "<traj_id>" \
-  --annotation-tree \
-  --traj-annotation-path workspace/<traj_id>.annotation.json \
-  --skip-discovery \
-  --skip-sandbox
-```
-
-**Flag reference:**
-
-| Flag | Purpose |
-|------|---------|
-| `--output-dir` | Root directory for all outputs |
-| `--traj-id` | Subdirectory name under output-dir |
-| `--annotation-tree` | Build the analysis tree from ground-truth annotations instead of heuristics |
-| `--traj-annotation-path` | Path to the annotation JSON file |
-| `--skip-discovery` | Fail fast if trajectory format is unrecognized (don't invoke LLM generator) |
-| `--skip-sandbox` | Skip sandbox environment creation |
-| `--cost-limit` | Max LLM spend in USD per trajectory (default: 3.0) |
-| `--dry-run` | Normalize + tree only, skip the LLM trace agent |
-
-For terminal-bench tasks, also pass `--tasks-root` pointing to the tasks directory:
-
-```bash
-codetracer analyze workspace/<traj_id>/ \
-  ... \
-  --tasks-root /path/to/terminal-bench/tasks
-```
-
-### Step 5: Batch Run (All 1000 Verified)
-
-Use the provided batch script to run all verified entries in parallel:
-
-```bash
-bash scripts/run_verified_batch.sh \
-  --parallel 4 \
-  --model claude-sonnet-4-20250514 \
-  --manifest /path/to/bench_manifest.verified.jsonl \
-  --output /path/to/outputs
-```
-
-Options:
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--parallel N` | 4 | Number of parallel workers |
-| `--model` | `claude-sonnet-4-20250514` | LLM model name |
-| `--resume` | on | Skip trajectories that already have output |
-| `--dry-run` | off | Normalize + tree only, skip LLM trace |
-| `--cost-limit` | 3.0 | USD per trajectory |
-| `--api-key` | env `CODETRACER_API_KEY` | API key |
-| `--api-base` | env `CODETRACER_API_BASE` | API endpoint |
-
-### Step 6: Output Structure
-
-Each completed trajectory produces:
-
-```
-outputs/<traj_id>/
-  steps.json                    # normalized trajectory (action/observation per step)
-  tree.md                       # step classification tree (change/explore labels)
-  stage_ranges.json             # stage segmentation
-  codetracer_labels.json        # predicted labels (the main output)
-  codetracer_labels.traj.json   # full agent reasoning trace
-```
-
-`codetracer_labels.json` format:
+Each analysis produces structured diagnostic labels:
 
 ```json
 [
@@ -198,66 +145,167 @@ outputs/<traj_id>/
     "stage_id": 3,
     "incorrect_step_ids": [21, 22],
     "unuseful_step_ids": [],
-    "reasoning": "Steps 21-22 edit the wrong file..."
+    "reasoning": "Steps 21-22 edit the wrong file based on an incorrect localization hypothesis..."
   }
 ]
 ```
 
-### Step 7: Evaluation
+The `detailed` profile produces comprehensive root-cause analysis:
 
-Compare CodeTracer's predicted labels against the ground-truth `incorrect_stages` from the manifest:
+```json
+{
+  "root_cause_chain": ["Final test failure", "Wrong file edited", "Incorrect grep interpretation"],
+  "critical_decision_points": [
+    {"step_id": 15, "decision": "Searched for pattern X", "should_have": "Searched for pattern Y"}
+  ],
+  "correct_strategy": "Should have verified file structure before editing",
+  "stage_labels": [...],
+  "summary": "Agent mislocalized the bug due to ambiguous grep results..."
+}
+```
+
+### Evaluation Metrics
 
 ```python
+from datasets import load_dataset
 import json
 
-# Load prediction
-with open("outputs/<traj_id>/codetracer_labels.json") as f:
-    predicted = json.load(f)
+ds = load_dataset("Contextbench/Tracebench", split="verified")
 
-# Load ground truth from manifest entry
-ground_truth = entry["incorrect_stages"]
+for entry in ds:
+    pred = json.load(open(f"outputs/{entry['traj_id']}/codetracer_labels.json"))
+    gt = entry["incorrect_stages"]
 
-# Extract predicted incorrect step IDs
-pred_steps = set()
-for stage in predicted:
-    pred_steps.update(stage.get("incorrect_step_ids", []))
+    pred_steps = {s for stage in pred for s in stage.get("incorrect_step_ids", [])}
+    gt_steps = {s for stage in gt for s in stage.get("incorrect_step_ids", [])}
 
-# Extract ground-truth incorrect step IDs
-gt_steps = set()
-for stage in ground_truth:
-    gt_steps.update(stage.get("incorrect_step_ids", []))
+    tp = len(pred_steps & gt_steps)
+    precision = tp / len(pred_steps) if pred_steps else 0
+    recall = tp / len(gt_steps) if gt_steps else 0
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
+```
 
-# Compute metrics
-tp = len(pred_steps & gt_steps)
-precision = tp / len(pred_steps) if pred_steps else 0
-recall = tp / len(gt_steps) if gt_steps else 0
-f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
+## Supported Agents
 
-print(f"Precision: {precision:.2f}, Recall: {recall:.2f}, F1: {f1:.2f}")
+CodeTracer ships with built-in parsers for major agent frameworks:
+
+| Agent | Format | Auto-Detected |
+|-------|--------|:------------:|
+| [mini-SWE-agent](https://github.com/princeton-nlp/SWE-agent) | `agent-logs/mini.traj.json` + `sessions/` | Yes |
+| [OpenHands](https://github.com/All-Hands-AI/OpenHands) | OpenHands event stream | Yes |
+| [Terminus2](https://github.com/TerminalBench/Terminus2) | Session recordings + results | Yes |
+| Custom | Any format | Via auto-generated skill |
+
+### Auto-Skill Generation
+
+For unknown trajectory formats, CodeTracer automatically generates a parser:
+
+```bash
+# Auto-detect and generate parser for unknown format
+codetracer analyze /path/to/unknown/trajectory/ --model gpt-4o
+
+# Generated skill is cached for future use
+ls ~/.config/codetracer/skills/
 ```
 
 ## Configuration
 
-Full configuration reference is in `src/codetracer/config/default.yaml`. Key sections:
+Full configuration reference in [`src/codetracer/config/default.yaml`](src/codetracer/config/default.yaml).
 
-- `llm` -- API endpoint, model name, model kwargs
-- `trace` -- cost limit, step limit, prompt templates
-- `discovery` -- skill generator settings (max attempts)
-- `tree` -- tree builder templates
-- `replay` -- replay engine settings
+| Section | Key Settings |
+|---------|-------------|
+| `llm` | `api_base`, `model_name`, `model_kwargs` |
+| `trace` | `cost_limit`, `step_limit`, `timeout`, prompt templates |
+| `discovery` | `max_depth`, `skip_dirs`, auto-generation settings |
+| `memory` | `enabled`, `online_step_interval`, `online_token_threshold` |
+| `output.profiles` | `tracebench`, `detailed`, `rl_feedback` |
+| `replay` | `max_replay_steps`, `timeout` |
 
-Override any value via a custom YAML file:
+Override via custom YAML:
 
 ```bash
-codetracer analyze <run_dir> --config my_config.yaml ...
+codetracer analyze <run_dir> --config my_config.yaml --model gpt-4o
 ```
 
-## Supported Agent Formats
+### Output Profiles
 
-CodeTracer ships with built-in parsers (skills) for:
+| Profile | Output File | Description |
+|---------|-----------|-------------|
+| `tracebench` | `codetracer_labels.json` | Stage-level labels (benchmark evaluation) |
+| `detailed` | `codetracer_analysis.json` | Root cause chains + critical decision points |
+| `rl_feedback` | `codetracer_rl_feedback.json` | Per-step deviation analysis for RL training |
 
-- **miniswe** -- mini-SWE-agent trajectories (`agent-logs/mini.traj.json`, `sessions/agent.log`, `commands.txt`)
-- **openhands** -- OpenHands agent trajectories
-- **terminus2** -- Terminus2 agent trajectories
+```bash
+# Use specific profile
+codetracer analyze <run_dir> --profile rl_feedback --model gpt-4o
+```
 
-For unknown formats, CodeTracer can auto-generate a parser via LLM (unless `--skip-discovery` is set).
+## Project Structure
+
+```
+CodeTracer/
+├── src/codetracer/
+│   ├── agents/           # Core agent loops (trace, replay, compact)
+│   ├── cli/              # CLI commands and interactive REPL
+│   ├── config/           # Default configuration
+│   ├── discovery/        # Deep recursive trajectory discovery
+│   ├── llm/              # LLM client with Azure AD support
+│   ├── models/           # Data models (trajectory, analysis, replay)
+│   ├── plugins/          # Hook system and adapter interface
+│   ├── query/            # Normalizer, tree builder, config loader
+│   ├── scripts/          # Batch runner, dev tools, analysis scripts
+│   ├── services/         # Memory, cost tracking, validation, complexity
+│   ├── skills/           # Format parsers (built-in + generated)
+│   ├── state/            # Output profiles and session persistence
+│   └── utils/            # Template rendering, report generation
+├── data/                 # Trajectory datasets
+├── scripts/              # Shell scripts for batch operations
+└── tests/                # Test suite
+```
+
+## CLI Reference
+
+```
+Usage: codetracer [COMMAND] [OPTIONS]
+
+Commands:
+  analyze         Run trajectory diagnosis on a single run directory
+  run             Full pipeline: normalize → tree → analyze → replay
+  replay          Resume a trajectory from a diagnosed breakpoint
+  repl            Interactive trajectory exploration shell
+  normalize       Normalize a trajectory to steps.json format
+  tree            Build step classification tree
+  batch           Run batch analysis from manifest
+
+Global Options:
+  --model TEXT     LLM model name
+  --api-base URL   API endpoint
+  --api-key TEXT   API key
+  --config PATH   Custom configuration file
+  --profile TEXT   Output profile (tracebench/detailed/rl_feedback)
+  --cost-limit $   Max LLM spend per trajectory (default: 3.0)
+  --dry-run       Normalize + tree only, skip LLM analysis
+```
+
+## Citation
+
+If you use CodeTracer or Tracebench in your research, please cite:
+
+```bibtex
+@article{codetracer2025,
+  title={CodeTracer: Self-Evolving Agent Trajectory Diagnosis},
+  author={},
+  journal={arXiv preprint arXiv:2502.xxxxx},
+  year={2025}
+}
+```
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <sub>Built with care at <a href="https://cs.nju.edu.cn">Nanjing University</a></sub>
+</p>
