@@ -37,6 +37,7 @@ class LLMClientConfig(BaseModel):
     api_key: str = ""
     model_name: str | None = None
     model_kwargs: dict[str, Any] = {}
+    azure_ad_resource: str = ""  # e.g. "api://feb7b661-..." for Azure AD token auth
 
 
 def _is_retryable(error: BaseException) -> bool:
@@ -115,11 +116,31 @@ class LLMClient:
             raise ValueError("Missing api_base. Set llm.api_base config or CODETRACER_API_BASE env var.")
 
         api_key = self.config.api_key or os.getenv("CODETRACER_API_KEY") or os.getenv("OPENAI_API_KEY") or ""
+
+        # Azure AD token auth: get token via az cli if azure_ad_resource is set and no api_key
+        azure_ad_resource = (
+            self.config.azure_ad_resource or os.getenv("CODETRACER_AZURE_AD_RESOURCE") or ""
+        )
+        if not api_key and azure_ad_resource:
+            api_key = self._get_azure_ad_token(azure_ad_resource)
+
         if not api_key:
             raise ValueError("Missing api_key. Set llm.api_key config or CODETRACER_API_KEY env var.")
 
         self._openai = OpenAI(api_key=api_key, base_url=api_base)
         return self._openai
+
+    @staticmethod
+    def _get_azure_ad_token(resource: str) -> str:
+        """Get an Azure AD token via az cli."""
+        import subprocess
+        result = subprocess.run(
+            ["az", "account", "get-access-token", "--resource", resource, "--query", "accessToken", "-o", "tsv"],
+            capture_output=True, text=True, timeout=30,
+        )
+        if result.returncode != 0:
+            raise ValueError(f"Azure CLI token acquisition failed: {result.stderr.strip()}")
+        return result.stdout.strip()
 
     def _detect_model_name(self) -> str:
         client = self._ensure_client()

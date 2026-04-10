@@ -16,6 +16,7 @@ from codetracer.llm.client import LLMClient
 from codetracer.models.task import TaskContext
 from codetracer.plugins.hooks import HookManager
 from codetracer.services.cost_tracker import CostTracker
+from codetracer.services.memory import OnlineMemoryExtractor
 from codetracer.skills.loader import Skill
 from codetracer.state.output_profile import OutputProfile
 
@@ -36,6 +37,7 @@ class TraceAgent:
         cost_tracker: CostTracker | None = None,
         compact_manager: CompactManager | None = None,
         profile: OutputProfile | None = None,
+        agent_type: str = "",
     ) -> None:
         self._llm = llm
         self._assembler = assembler
@@ -52,6 +54,20 @@ class TraceAgent:
             timeout=int(trace_cfg.get("timeout", 60)),
             extra_env=env_cfg,
         )
+
+        # Online memory: mid-analysis experience extraction
+        online_memory = None
+        mem_cfg = config.get("memory", {})
+        if mem_cfg.get("enabled", True) and agent_type:
+            mem_dir = Path(mem_cfg["memory_dir"]) if mem_cfg.get("memory_dir") else None
+            online_memory = OnlineMemoryExtractor(
+                agent_type=agent_type,
+                llm=llm,
+                memory_dir=mem_dir,
+                step_interval=int(mem_cfg.get("online_step_interval", 8)),
+                token_threshold=int(mem_cfg.get("online_token_threshold", 30_000)),
+            )
+
         self._agent = BaseAgent(
             llm,
             executor,
@@ -59,6 +75,7 @@ class TraceAgent:
             hooks=hooks,
             cost_tracker=cost_tracker,
             compact_manager=compact_manager,
+            online_memory=online_memory,
         )
 
     def run(
@@ -67,6 +84,7 @@ class TraceAgent:
         task_ctx: TaskContext | None = None,
         memory_text: str = "",
         budget_context: str = "",
+        traj_metadata: dict[str, Any] | None = None,
     ) -> str:
         messages = self._assembler.build_trace_messages(
             self._run_dir,
@@ -76,6 +94,7 @@ class TraceAgent:
             profile=self._profile,
             memory_text=memory_text,
             budget_context=budget_context,
+            traj_metadata=traj_metadata,
         )
         return self._agent.run(messages)
 
@@ -85,6 +104,7 @@ class TraceAgent:
         task_ctx: TaskContext | None = None,
         memory_text: str = "",
         budget_context: str = "",
+        traj_metadata: dict[str, Any] | None = None,
     ):
         """Generator variant that yields AgentEvent objects."""
         messages = self._assembler.build_trace_messages(
@@ -95,6 +115,7 @@ class TraceAgent:
             profile=self._profile,
             memory_text=memory_text,
             budget_context=budget_context,
+            traj_metadata=traj_metadata,
         )
         return self._agent.run_iter(messages)
 

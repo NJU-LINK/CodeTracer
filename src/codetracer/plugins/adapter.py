@@ -112,7 +112,8 @@ class GenericPluginAdapter(PluginAdapter):
         llm = self._make_llm(**kwargs)
         pool = SkillPool()
         assembler = ContextAssembler(self._config, pool)
-        agent = TraceAgent(llm, assembler, run_dir, output_path, self._config)
+        agent = TraceAgent(llm, assembler, run_dir, output_path, self._config,
+                           agent_type=self._skill_name or "")
         skill = pool.get(self._skill_name)
         agent.run(skill)
 

@@ -1,7 +1,8 @@
 llm:
-  api_base: ""
+  api_base: "https://cloudgpt-openai.azure-api.net/openai/v1/"
   api_key: ""
-  model_name: null
+  model_name: "gpt-4.1-mini-20250414"
+  azure_ad_resource: "api://feb7b661-cac7-44a8-8dc1-163b63c23df2"
   model_kwargs: {}
 
 trace:
@@ -96,9 +97,9 @@ trace:
     Workflow:
     {% if task_dir %}
     1. EXPLORE the task context (Phase 1 above — mandatory)
-    2. Initialize output file: python -c 'import json; open("codetracer_labels.json","w").write("[]")'
+    2. Initialize output file: python -c 'import json; open("{{ output_file }}","w").write("[]")'
     {% else %}
-    1. Initialize output file: python -c 'import json; open("codetracer_labels.json","w").write("[]")'
+    1. Initialize output file: python -c 'import json; open("{{ output_file }}","w").write("[]")'
     {% endif %}
     3. Use tree.md to spot suspicious areas
     4. INSPECT suspicious step_ids (one per response)
@@ -110,18 +111,10 @@ trace:
     - Inspect at least 3 distinct steps spread across the trajectory before finalizing
     - Do NOT auto-label without evidence
 
-    Output file (codetracer_labels.json):
-    ```json
-    [{"stage_id": N, "incorrect_step_ids": [], "unuseful_step_ids": [], "reasoning": "..."}]
-    ```
-    Each entry corresponds to one stage (stage_id is an integer matching the
-    stage numbers in stage_ranges.json). Create one entry per stage that
-    contains incorrect or unuseful steps.
-
-    Initialize:
-    ```bash
-    python -c 'import json; open("codetracer_labels.json","w").write("[]")'
-    ```
+    CRITICAL — Output file and format:
+    {{ profile_finalize_instruction }}
+    Write your analysis to "{{ output_file }}" using a bash python one-liner.
+    You MUST follow the output format above exactly.
 
     Finalize last:
     ```bash
@@ -130,29 +123,30 @@ trace:
 
   observation_template: |
     <returncode>{{ output.returncode }}</returncode>
-    {% if output.output | length < 10000 -%}
     <output>
     {{ output.output -}}
     </output>
-    {%- else -%}
-    <warning>Output too long.</warning>
-    <output_head>
-    {{ output.output[:5000] }}
-    </output_head>
-    <elided>{{ output.output | length - 10000 }} chars elided</elided>
-    <output_tail>
-    {{ output.output[-5000:] }}
-    </output_tail>
-    {%- endif -%}
 
   format_error_template: "Please provide EXACTLY ONE bash code block. Found {{ actions | length }} blocks."
 
   timeout_template: |
     Command timed out: {{ action['action'] }}
-    {% if output | length < 10000 %}Output: {{ output }}{% else %}Output (truncated): {{ output[:3000] }}{% endif %}
+    Output: {{ output }}
 
 discovery:
   max_attempts: 3
+  max_depth: 10
+  skip_dirs:
+    - .git
+    - node_modules
+    - __pycache__
+    - .venv
+    - env
+    - venv
+    - .tox
+    - .mypy_cache
+    - .pytest_cache
+    - .ruff_cache
 
   system_template: |
     You are a code agent specializing in parsing agent trajectory files.
@@ -283,7 +277,7 @@ classification:
   store_path: null
 
 output:
-  default_profile: tracebench
+  default_profile: detailed
   profiles:
     tracebench:
       schema_ref: tracebench_labels
@@ -291,12 +285,23 @@ output:
       output_file: codetracer_labels.json
     detailed:
       schema_ref: deep_analysis
-      finalize_instruction: "Output a comprehensive root cause analysis as codetracer_analysis.json."
+      finalize_instruction: >-
+        Output a comprehensive root cause analysis as a JSON OBJECT (not array) in codetracer_analysis.json.
+        The JSON object must have these top-level keys: root_cause_chain (array of strings describing the
+        failure chain from final failure back to initial error), critical_decision_points (array of objects
+        with keys step_id, decision, should_have), correct_strategy (string), stage_labels (array of objects
+        with keys stage_id, incorrect_step_ids, unuseful_step_ids, reasoning), and summary (string).
       output_file: codetracer_analysis.json
+    rl_feedback:
+      schema_ref: rl_feedback
+      finalize_instruction: "Output codetracer_rl_feedback.json with per-step deviation analysis for RL training."
+      output_file: codetracer_rl_feedback.json
 
 memory:
   enabled: true
   memory_dir: null
+  online_step_interval: 8
+  online_token_threshold: 30000
 
 plugin:
   adapters: {}

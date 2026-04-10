@@ -31,7 +31,16 @@ def _load_pre_normalized(run_dir: Path) -> NormalizedTrajectory:
         action = entry.get("action") or (a_ref.content if a_ref else "") or ""
         observation = entry.get("observation", o_ref.content if o_ref else None)
         steps.append(
-            StepRecord(step_id=step_id, action=action, observation=observation, action_ref=a_ref, observation_ref=o_ref)
+            StepRecord(
+                step_id=step_id,
+                action=action,
+                observation=observation,
+                thinking=entry.get("thinking"),
+                parallel_group=entry.get("parallel_group"),
+                tool_type=entry.get("tool_type"),
+                action_ref=a_ref,
+                observation_ref=o_ref,
+            )
         )
 
     task_description = ""

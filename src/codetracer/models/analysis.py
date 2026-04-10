@@ -11,6 +11,7 @@ from pathlib import Path
 class StepVerdict(str, Enum):
     INCORRECT = "incorrect"
     UNUSEFUL = "unuseful"
+    CORRECT = "correct"
 
 
 @dataclass
@@ -20,9 +21,19 @@ class StepLabel:
     step_id: int
     verdict: StepVerdict
     reasoning: str = ""
+    deviation_type: str = ""
+    correct_alternative: str = ""
+    impact_severity: str = ""
 
     def to_dict(self) -> dict:
-        return {"step_id": self.step_id, "verdict": self.verdict.value, "reasoning": self.reasoning}
+        d = {"step_id": self.step_id, "verdict": self.verdict.value, "reasoning": self.reasoning}
+        if self.deviation_type:
+            d["deviation_type"] = self.deviation_type
+        if self.correct_alternative:
+            d["correct_alternative"] = self.correct_alternative
+        if self.impact_severity:
+            d["impact_severity"] = self.impact_severity
+        return d
 
     @classmethod
     def from_dict(cls, d: dict) -> StepLabel:
@@ -30,6 +41,9 @@ class StepLabel:
             step_id=d["step_id"],
             verdict=StepVerdict(d["verdict"]),
             reasoning=d.get("reasoning", ""),
+            deviation_type=d.get("deviation_type", ""),
+            correct_alternative=d.get("correct_alternative", ""),
+            impact_severity=d.get("impact_severity", ""),
         )
 
 
