@@ -11,14 +11,14 @@
 </pre>
 </p>
 
-<p align="center">
-  <b>Self-Evolving Agent Trajectory Diagnosis System</b>
-</p>
+<h3 align="center">Self-Evolving Agent Trajectory Diagnosis System</h3>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2604.11641"><img src="https://img.shields.io/badge/arXiv-2604.11641-b31b1b.svg?style=flat-square" alt="arXiv"></a>
-  <a href="https://NJU-LINK.github.io/CodeTracer/"><img src="https://img.shields.io/badge/docs-API%20Reference-blue.svg?style=flat-square&logo=readthedocs&logoColor=white" alt="Docs"></a>
-  <a href="https://huggingface.co/datasets/Contextbench/Tracebench"><img src="https://img.shields.io/badge/🤗-Tracebench-yellow.svg?style=flat-square" alt="Dataset"></a>
+  <a href="https://arxiv.org/abs/2604.11641"><img src="https://img.shields.io/badge/arXiv-2604.11641-b31b1b.svg?style=for-the-badge" alt="arXiv"></a>
+  <a href="https://NJU-LINK.github.io/CodeTracer/"><img src="https://img.shields.io/badge/docs-API%20Reference-blue.svg?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Docs"></a>
+  <a href="https://huggingface.co/datasets/NJU-LINK/CodeTraceBench"><img src="https://img.shields.io/badge/🤗-CodeTraceBench-yellow.svg?style=for-the-badge" alt="Dataset"></a>
+</p>
+<p align="center">
   <a href="https://pypi.org/project/codetracer/"><img src="https://img.shields.io/pypi/v/codetracer.svg?style=flat-square&logo=pypi&logoColor=white" alt="PyPI"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat-square" alt="License"></a>
@@ -27,7 +27,8 @@
 
 <p align="center">
   <a href="#quick-start">Quick Start</a> &bull;
-  <a href="#tracebench">Tracebench</a> &bull;
+  <a href="#how-it-works">How It Works</a> &bull;
+  <a href="#codetrace-bench">CodeTraceBench</a> &bull;
   <a href="#supported-agents">Supported Agents</a> &bull;
   <a href="#configuration">Configuration</a> &bull;
   <a href="#citation">Citation</a>
@@ -37,15 +38,74 @@
 
 **CodeTracer** analyzes agent execution trajectories step-by-step, identifies *incorrect* and *unuseful* actions, and produces structured diagnostic labels. It operates as an autonomous diagnosis agent — navigating trajectory environments, inspecting evidence, and building root-cause chains — with cross-trajectory memory that accumulates experience over time.
 
+> [!TIP]
+> **New to CodeTracer?** Start with a single trajectory: `codetracer analyze /path/to/trajectory/ --model gpt-4o --profile detailed`
+
 ## Highlights
 
-- **Autonomous Diagnosis Agent** — Iteratively explores trajectory data, inspects steps, gathers evidence, and produces structured error labels with full reasoning chains
-- **Deep Recursive Discovery** — Three-phase trajectory discovery (marker scan → child preference → LLM-guided analysis) handles arbitrarily nested and messy data archives
-- **Auto-Skill Generation** — Unknown trajectory formats are automatically parsed via LLM-generated skills; no manual parser authoring required
-- **Cross-Trajectory Memory** — Online memory extraction during analysis accumulates agent-specific failure patterns and investigation strategies across runs
-- **Resilient Context Management** — Two-tier compaction (LLM summarization → sliding window fallback) ensures analysis never stalls from context overflow
-- **Replay Engine** — Resume failed trajectories from diagnosed breakpoints with corrective strategies injected
-- **Interactive REPL** — Step-by-step trajectory inspection with an interactive CLI
+<table>
+<tr>
+<td width="50%">
+
+**Autonomous Diagnosis Agent**
+Iteratively explores trajectory data, inspects steps, gathers evidence, and produces structured error labels with full reasoning chains.
+
+**Deep Recursive Discovery**
+Three-phase trajectory discovery (marker scan → child preference → LLM-guided analysis) handles arbitrarily nested and messy data archives.
+
+**Auto-Skill Generation**
+Unknown trajectory formats are automatically parsed via LLM-generated skills; no manual parser authoring required.
+
+</td>
+<td width="50%">
+
+**Cross-Trajectory Memory**
+Online memory extraction during analysis accumulates agent-specific failure patterns and investigation strategies across runs.
+
+**Resilient Context Management**
+Two-tier compaction (LLM summarization → sliding window fallback) ensures analysis never stalls from context overflow.
+
+**Replay Engine**
+Resume failed trajectories from diagnosed breakpoints with corrective strategies injected.
+
+</td>
+</tr>
+</table>
+
+---
+
+## How It Works
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        CodeTracer Pipeline                              │
+│                                                                         │
+│   ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌───────────────┐  │
+│   │ Discovery  │───▶│ Normalize │───▶│   Tree    │───▶│   Diagnosis   │  │
+│   │           │    │           │    │  Builder  │    │    Agent      │  │
+│   │ Deep scan │    │ Unify all │    │ Classify  │    │ Inspect steps │  │
+│   │ + auto-   │    │ formats → │    │ steps →   │    │ + label       │  │
+│   │ detect    │    │ steps.json│    │ tree.md   │    │ errors        │  │
+│   └───────────┘    └───────────┘    └───────────┘    └──────┬────────┘  │
+│                                                             │           │
+│                              ┌───────────────┐              │           │
+│                        ┌─────│    Memory      │◀─────────────┘           │
+│                        │     │  Cross-traj    │                         │
+│                        │     │  experience    │                         │
+│                        │     └───────────────┘                         │
+│                        ▼                                                │
+│   ┌───────────────┐    ┌───────────────┐    ┌───────────────────────┐   │
+│   │  Structured   │    │    Replay     │    │    Output Profiles    │   │
+│   │  Error Labels │    │    Engine     │    │                       │   │
+│   │               │    │              │    │ • tracebench (eval)   │   │
+│   │ incorrect /   │    │ Resume from  │    │ • detailed (root     │   │
+│   │ unuseful      │    │ breakpoint   │    │   cause analysis)    │   │
+│   │ per step      │    │ + fix        │    │ • rl_feedback (RL)   │   │
+│   └───────────────┘    └───────────────┘    └───────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
 
 ## Quick Start
 
@@ -85,6 +145,8 @@ codetracer-batch \
 codetracer repl /path/to/trajectory/
 ```
 
+---
+
 ## Core Modules
 
 | Module | Description |
@@ -98,20 +160,25 @@ codetracer repl /path/to/trajectory/
 | `query.normalizer` | Unified trajectory normalization across all supported formats |
 | `query.tree_builder` | Step classification tree construction (change/explore labeling) |
 
-## Tracebench
+---
 
-[**Tracebench**](https://huggingface.co/datasets/Contextbench/Tracebench) is a benchmark of 4,316 agent trajectories with human-verified step-level annotations for trajectory diagnosis evaluation.
+## CodeTrace Bench
+
+[**CodeTraceBench**](https://huggingface.co/datasets/NJU-LINK/CodeTraceBench) is a benchmark of **4,316 agent trajectories** with human-verified step-level annotations for trajectory diagnosis evaluation.
 
 | Split | Trajectories | Description |
-|-------|-------------|-------------|
+|-------|:-------------|-------------|
 | `verified` | 1,000 | Curated subset (489 SWE-bench + 511 TerminalBench) |
 | `full` | 3,316 | All trajectories across agents and models |
+
+> [!NOTE]
+> CodeTraceBench covers **4 agents** (mini-SWE-agent, OpenHands, Terminus2, SWE-agent) × **5 models** (Claude Sonnet 4, DeepSeek-V3.2, Kimi-K2, GPT-5, Qwen3-Coder) across **26 task categories**.
 
 ### Quick Evaluation
 
 ```bash
 # Download and extract
-huggingface-cli download Contextbench/Tracebench \
+huggingface-cli download NJU-LINK/CodeTraceBench \
   --repo-type dataset \
   --local-dir ./tracebench_data
 
@@ -123,7 +190,8 @@ codetracer-batch \
   --output outputs/
 ```
 
-### Dataset Fields
+<details>
+<summary><b>Dataset Fields</b></summary>
 
 | Field | Description |
 |-------|-------------|
@@ -135,6 +203,8 @@ codetracer-batch \
 | `solved` | Whether the agent solved the task |
 | `step_count` | Total number of steps |
 | `difficulty` | `easy` / `medium` / `hard` |
+
+</details>
 
 ### Output Format
 
@@ -151,7 +221,8 @@ Each analysis produces structured diagnostic labels:
 ]
 ```
 
-The `detailed` profile produces comprehensive root-cause analysis:
+<details>
+<summary><b>Detailed profile output (root-cause analysis)</b></summary>
 
 ```json
 {
@@ -165,13 +236,15 @@ The `detailed` profile produces comprehensive root-cause analysis:
 }
 ```
 
+</details>
+
 ### Evaluation Metrics
 
 ```python
 from datasets import load_dataset
 import json
 
-ds = load_dataset("Contextbench/Tracebench", split="verified")
+ds = load_dataset("NJU-LINK/CodeTraceBench", split="verified")
 
 for entry in ds:
     pred = json.load(open(f"outputs/{entry['traj_id']}/codetracer_labels.json"))
@@ -185,6 +258,8 @@ for entry in ds:
     recall = tp / len(gt_steps) if gt_steps else 0
     f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
 ```
+
+---
 
 ## Supported Agents
 
@@ -208,6 +283,8 @@ codetracer analyze /path/to/unknown/trajectory/ --model gpt-4o
 # Generated skill is cached for future use
 ls ~/.config/codetracer/skills/
 ```
+
+---
 
 ## Configuration
 
@@ -241,6 +318,8 @@ codetracer analyze <run_dir> --config my_config.yaml --model gpt-4o
 codetracer analyze <run_dir> --profile rl_feedback --model gpt-4o
 ```
 
+---
+
 ## Project Structure
 
 ```
@@ -264,7 +343,10 @@ CodeTracer/
 └── tests/                # Test suite
 ```
 
-## CLI Reference
+---
+
+<details>
+<summary><b>CLI Reference</b></summary>
 
 ```
 Usage: codetracer [COMMAND] [OPTIONS]
@@ -288,9 +370,11 @@ Global Options:
   --dry-run       Normalize + tree only, skip LLM analysis
 ```
 
+</details>
+
 ## Citation
 
-If you use CodeTracer or Tracebench in your research, please cite:
+If you use CodeTracer or CodeTraceBench in your research, please cite:
 
 ```bibtex
 @article{li2026codetracer,
