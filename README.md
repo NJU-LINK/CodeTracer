@@ -115,7 +115,7 @@ codetracer-batch \
 ### Interactive REPL
 
 ```bash
-codetracer repl /path/to/trajectory/
+codetracer interactive /path/to/trajectory/
 ```
 
 ---
@@ -328,10 +328,8 @@ Commands:
   analyze         Run trajectory diagnosis on a single run directory
   run             Full pipeline: normalize → tree → analyze → replay
   replay          Resume a trajectory from a diagnosed breakpoint
-  repl            Interactive trajectory exploration shell
-  normalize       Normalize a trajectory to steps.json format
-  tree            Build step classification tree
-  batch           Run batch analysis from manifest
+  interactive     Interactive trajectory exploration shell
+  inspect         Inspect a specific step or range from a trajectory
 
 Global Options:
   --model TEXT     LLM model name
