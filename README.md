@@ -11,6 +11,12 @@
 </pre>
 </p>
 
+<p align="center">
+  <a href="https://www.nju.edu.cn"><img src="assets/nju_logo.png" height="48" alt="Nanjing University"></a>
+  &nbsp;&nbsp;<b>NJU-LINK</b>&nbsp;&nbsp;×&nbsp;&nbsp;<b>Kwaipilot</b>&nbsp;&nbsp;
+  <a href="https://huggingface.co/Kwaipilot"><img src="assets/kwaipilot_logo.png" height="48" alt="Kwaipilot"></a>
+</p>
+
 <h3 align="center">Self-Evolving Agent Trajectory Diagnosis System</h3>
 
 <p align="center">
@@ -355,11 +361,6 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 ---
 
-<p align="center">
-  <a href="https://www.nju.edu.cn"><img src="assets/nju_logo.png" height="64" alt="Nanjing University"></a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://huggingface.co/Kwaipilot"><img src="assets/kwaipilot_logo.png" height="64" alt="Kwaipilot"></a>
-</p>
 <p align="center">
   <sub>Built at <a href="https://www.nju.edu.cn">Nanjing University</a> &amp; <a href="https://huggingface.co/Kwaipilot">Kwaipilot</a></sub>
 </p>
