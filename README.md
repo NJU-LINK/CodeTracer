@@ -12,9 +12,12 @@
 </p>
 
 <p align="center">
-  <a href="https://www.nju.edu.cn"><img src="assets/nju_logo.png" height="48" alt="Nanjing University"></a>
-  &nbsp;&nbsp;<b>NJU-LINK</b>&nbsp;&nbsp;×&nbsp;&nbsp;<b>Kwaipilot</b>&nbsp;&nbsp;
-  <a href="https://huggingface.co/Kwaipilot"><img src="assets/kwaipilot_logo.png" height="48" alt="Kwaipilot"></a>
+  <a href="https://www.nju.edu.cn"><img src="assets/nju_logo.png" height="72" alt="Nanjing University"></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://huggingface.co/Kwaipilot"><img src="assets/kwaipilot_logo.png" height="72" alt="Kwaipilot"></a>
+</p>
+<p align="center">
+  <b>NJU-LINK</b>&nbsp;&nbsp;×&nbsp;&nbsp;<b>Kwaipilot</b>
 </p>
 
 <h3 align="center">Self-Evolving Agent Trajectory Diagnosis System</h3>
