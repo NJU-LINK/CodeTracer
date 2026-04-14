@@ -16,7 +16,8 @@
 </p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2502.xxxxx"><img src="https://img.shields.io/badge/arXiv-2502.xxxxx-b31b1b.svg?style=flat-square" alt="arXiv"></a>
+  <a href="https://arxiv.org/abs/2604.11641"><img src="https://img.shields.io/badge/arXiv-2604.11641-b31b1b.svg?style=flat-square" alt="arXiv"></a>
+  <a href="https://NJU-LINK.github.io/CodeTracer/"><img src="https://img.shields.io/badge/docs-API%20Reference-blue.svg?style=flat-square&logo=readthedocs&logoColor=white" alt="Docs"></a>
   <a href="https://huggingface.co/datasets/Contextbench/Tracebench"><img src="https://img.shields.io/badge/🤗-Tracebench-yellow.svg?style=flat-square" alt="Dataset"></a>
   <a href="https://pypi.org/project/codetracer/"><img src="https://img.shields.io/pypi/v/codetracer.svg?style=flat-square&logo=pypi&logoColor=white" alt="PyPI"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
@@ -292,11 +293,11 @@ Global Options:
 If you use CodeTracer or Tracebench in your research, please cite:
 
 ```bibtex
-@article{codetracer2025,
-  title={CodeTracer: Self-Evolving Agent Trajectory Diagnosis},
-  author={},
-  journal={arXiv preprint arXiv:2502.xxxxx},
-  year={2025}
+@article{li2026codetracer,
+  title={CodeTracer: Towards Traceable Agent States},
+  author={Li, Han and Yao, Yifan and Zhu, Letian and Feng, Rili and Ye, Hongyi and Wang, Jiaming and He, Yancheng and Zou, Pengyu and Zhang, Lehan and Lei, Xinping and Huang, Haoyang and Deng, Ken and Sun, Ming and Zhang, Zhaoxiang and Ye, He and Liu, Jiaheng},
+  journal={arXiv preprint arXiv:2604.11641},
+  year={2026}
 }
 ```
 

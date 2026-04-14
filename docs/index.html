@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeTracer API Reference</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --text-muted: #8b949e;
+  --heading: #f0f6fc;
+  --accent: #58a6ff;
+  --accent2: #3fb950;
+  --code-bg: #1c2128;
+  --sidebar-w: 280px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Layout */
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 24px 16px;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  overflow-y: auto;
+}
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 40px 48px;
+  max-width: 900px;
+}
+
+/* Sidebar */
+.sidebar .logo { font-size: 18px; font-weight: 700; color: var(--heading); margin-bottom: 8px; }
+.sidebar .tagline { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+.sidebar .nav-group { margin-bottom: 16px; }
+.sidebar .nav-label {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-muted); margin-bottom: 6px; font-weight: 600;
+}
+.sidebar .nav-link {
+  display: block; padding: 4px 8px; border-radius: 6px;
+  font-size: 13px; color: var(--text); transition: background 0.15s;
+}
+.sidebar .nav-link:hover { background: var(--border); text-decoration: none; }
+.sidebar .nav-link.active { background: rgba(88,166,255,0.15); color: var(--accent); }
+
+/* Content */
+h1 { font-size: 32px; color: var(--heading); margin-bottom: 8px; }
+h2 {
+  font-size: 22px; color: var(--heading); margin-top: 48px; margin-bottom: 16px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+h3 { font-size: 17px; color: var(--accent); margin-top: 32px; margin-bottom: 8px; }
+h4 { font-size: 14px; color: var(--text-muted); margin-top: 20px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+p { margin-bottom: 12px; }
+.subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; }
+
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 13px; background: var(--code-bg); padding: 2px 6px; border-radius: 4px;
+}
+pre {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; overflow-x: auto; margin-bottom: 16px;
+}
+pre code { background: none; padding: 0; }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge-class { background: rgba(88,166,255,0.15); color: var(--accent); }
+.badge-func { background: rgba(63,185,80,0.15); color: var(--accent2); }
+.badge-data { background: rgba(210,153,34,0.15); color: #d29922; }
+.badge-enum { background: rgba(188,140,255,0.15); color: #bc8cff; }
+.badge-abc { background: rgba(255,123,114,0.15); color: #ff7b72; }
+
+.method-list { list-style: none; margin: 8px 0 16px 0; }
+.method-list li { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.method-list li:last-child { border-bottom: none; }
+.method-sig { font-family: monospace; font-size: 13px; color: var(--heading); }
+.method-desc { font-size: 13px; color: var(--text-muted); margin-left: 8px; }
+.field-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; }
+.field-table th { text-align: left; font-size: 12px; color: var(--text-muted); padding: 6px 12px; border-bottom: 2px solid var(--border); }
+.field-table td { font-size: 13px; padding: 6px 12px; border-bottom: 1px solid var(--border); }
+.field-table td:first-child { font-family: monospace; color: var(--heading); white-space: nowrap; }
+.field-table td:nth-child(2) { font-family: monospace; color: var(--accent); white-space: nowrap; }
+
+.hero-banner {
+  background: linear-gradient(135deg, rgba(88,166,255,0.08), rgba(63,185,80,0.05));
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 32px; margin-bottom: 32px;
+}
+.install-box {
+  background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 16px; font-family: monospace; font-size: 14px; color: var(--accent2);
+  margin-top: 16px;
+}
+.install-box span { color: var(--text-muted); }
+
+.module-path { font-size: 12px; color: var(--text-muted); font-family: monospace; margin-bottom: 8px; }
+.section-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 20px; margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="logo">CodeTracer</div>
+  <div class="tagline">API Reference v0.1</div>
+
+  <div class="nav-group">
+    <div class="nav-label">Getting Started</div>
+    <a class="nav-link active" href="#overview">Overview</a>
+    <a class="nav-link" href="#installation">Installation</a>
+    <a class="nav-link" href="#quickstart">Quick Start</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Core Agents</div>
+    <a class="nav-link" href="#trace-agent">TraceAgent</a>
+    <a class="nav-link" href="#compact-manager">CompactManager</a>
+    <a class="nav-link" href="#context-assembler">ContextAssembler</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Discovery</div>
+    <a class="nav-link" href="#discovery">Explorer</a>
+    <a class="nav-link" href="#skill-pool">SkillPool</a>
+    <a class="nav-link" href="#skill-generator">SkillGenerator</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Query &amp; Normalization</div>
+    <a class="nav-link" href="#normalizer">Normalizer</a>
+    <a class="nav-link" href="#tree-builder">TreeBuilder</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Services</div>
+    <a class="nav-link" href="#memory">Memory</a>
+    <a class="nav-link" href="#cost-tracker">CostTracker</a>
+    <a class="nav-link" href="#llm-client">LLMClient</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Data Models</div>
+    <a class="nav-link" href="#models">Models</a>
+    <a class="nav-link" href="#output-profiles">Output Profiles</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Integration</div>
+    <a class="nav-link" href="#plugin-adapter">Plugin Adapters</a>
+    <a class="nav-link" href="#cli">CLI Reference</a>
+  </div>
+
+  <div class="nav-group" style="margin-top: 32px">
+    <a class="nav-link" href="https://github.com/NJU-LINK/CodeTracer">GitHub</a>
+    <a class="nav-link" href="https://arxiv.org/abs/2604.11641">Paper</a>
+  </div>
+</nav>
+
+<!-- Main content -->
+<main class="main">
+
+<!-- Hero -->
+<div class="hero-banner" id="overview">
+  <h1>CodeTracer API Reference</h1>
+  <p class="subtitle">Self-Evolving Agent Trajectory Diagnosis System</p>
+  <p>CodeTracer analyzes agent execution trajectories step-by-step, identifies <em>incorrect</em> and <em>unuseful</em> actions, and produces structured diagnostic labels. It operates as an autonomous diagnosis agent with cross-trajectory memory.</p>
+  <div class="install-box"><span>$</span> pip install codetracer</div>
+</div>
+
+<!-- Installation -->
+<h2 id="installation">Installation</h2>
+<pre><code>git clone https://github.com/NJU-LINK/CodeTracer.git
+cd CodeTracer
+pip install -e .</code></pre>
+<p>Configure your LLM endpoint:</p>
+<pre><code>export CODETRACER_API_BASE="https://api.openai.com/v1"
+export CODETRACER_API_KEY="your-api-key"</code></pre>
+
+<!-- Quick Start -->
+<h2 id="quickstart">Quick Start</h2>
+<pre><code class="language-python">from pathlib import Path
+from codetracer.query.normalizer import Normalizer
+from codetracer.query.tree_builder import TreeBuilder
+from codetracer.skills.pool import SkillPool
+from codetracer.agents.trace_agent import TraceAgent
+from codetracer.agents.context import ContextAssembler
+from codetracer.llm.client import LLMClient
+
+# 1. Normalize trajectory
+pool = SkillPool()
+normalizer = Normalizer(pool)
+skill = normalizer.detect(Path("path/to/trajectory"))
+traj = normalizer.normalize(Path("path/to/trajectory"), skill)
+
+# 2. Build navigation tree
+tree_md = TreeBuilder().build(traj)
+
+# 3. Run diagnosis
+llm = LLMClient(api_base="https://api.openai.com/v1", api_key="...", model_name="gpt-4o")
+assembler = ContextAssembler(config={}, skill_pool=pool)
+agent = TraceAgent(llm, assembler, Path("./work"), Path("./labels.json"), config={})
+result = agent.run(skill)</code></pre>
+
+<!-- ======== CORE AGENTS ======== -->
+
+<h2 id="trace-agent">TraceAgent</h2>
+<div class="module-path">codetracer.agents.trace_agent</div>
+<p><span class="badge badge-class">class</span> High-level trace agent that wires context assembly and the base agent loop for autonomous trajectory diagnosis.</p>
+
+<h4>Constructor</h4>
+<pre><code>TraceAgent(
+    llm: LLMClient,
+    assembler: ContextAssembler,
+    run_dir: Path,
+    output_path: Path,
+    config: dict[str, Any],
+    artifacts_dir: Path | None = None,
+    *,
+    hooks: HookManager | None = None,
+    cost_tracker: CostTracker | None = None,
+    compact_manager: CompactManager | None = None,
+    profile: OutputProfile | None = None,
+    agent_type: str = ""
+)</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li>
+    <span class="method-sig">run(skill, task_ctx=None, memory_text="", budget_context="", traj_metadata=None) &rarr; str</span>
+    <span class="method-desc">Run full analysis and return result summary.</span>
+  </li>
+  <li>
+    <span class="method-sig">run_iter(skill, task_ctx=None, memory_text="", budget_context="", traj_metadata=None)</span>
+    <span class="method-desc">Generator variant that yields <code>AgentEvent</code> objects for streaming.</span>
+  </li>
+  <li>
+    <span class="method-sig">save_trajectory(path: Path) &rarr; None</span>
+    <span class="method-desc">Save agent conversation trajectory to JSON file.</span>
+  </li>
+</ul>
+
+<!-- CompactManager -->
+<h2 id="compact-manager">CompactManager</h2>
+<div class="module-path">codetracer.agents.compact</div>
+<p><span class="badge badge-class">class</span> Two-tier context compaction: LLM summarization with sliding-window fallback. Never permanently disables.</p>
+
+<h4>Constructor</h4>
+<pre><code>CompactManager(
+    context_window: int = 128_000,
+    buffer_tokens: int = 13_000,
+    max_failures: int = 3,
+    enabled: bool = True
+)</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li>
+    <span class="method-sig">should_compact(messages: list[dict]) &rarr; bool</span>
+    <span class="method-desc">Check if messages exceed the token threshold.</span>
+  </li>
+  <li>
+    <span class="method-sig">compact(messages: list[dict], llm) &rarr; list[dict]</span>
+    <span class="method-desc">Summarize messages and return shorter replacement list.</span>
+  </li>
+</ul>
+<h4>Properties</h4>
+<ul class="method-list">
+  <li><span class="method-sig">threshold: int</span> <span class="method-desc">Context window threshold in tokens.</span></li>
+  <li><span class="method-sig">compact_count: int</span> <span class="method-desc">Number of compaction passes applied.</span></li>
+</ul>
+
+<!-- ContextAssembler -->
+<h2 id="context-assembler">ContextAssembler</h2>
+<div class="module-path">codetracer.agents.context</div>
+<p><span class="badge badge-class">class</span> Composes LLM messages from config templates, skill docs, and run data.</p>
+
+<h4>Constructor</h4>
+<pre><code>ContextAssembler(config: dict[str, Any], skill_pool: SkillPool)</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li>
+    <span class="method-sig">build_trace_messages(run_dir, skill, task_ctx=None, ...) &rarr; list[dict]</span>
+    <span class="method-desc">Build [system, user] messages for trace agent using layered composition.</span>
+  </li>
+  <li>
+    <span class="method-sig">build_discovery_messages(run_dir, listing, samples) &rarr; list[dict]</span>
+    <span class="method-desc">Build messages for skill generator agent.</span>
+  </li>
+</ul>
+
+<!-- ======== DISCOVERY ======== -->
+
+<h2 id="discovery">Discovery Explorer</h2>
+<div class="module-path">codetracer.discovery.explorer</div>
+<p>Three-phase recursive trajectory discovery with LLM-guided fallback for arbitrarily nested directories.</p>
+
+<h3>discover_trajectory_dirs</h3>
+<p><span class="badge badge-func">function</span></p>
+<pre><code>discover_trajectory_dirs(
+    root: Path,
+    config: dict[str, Any] | None = None,
+    llm: LLMClient | None = None
+) &rarr; list[Path]</code></pre>
+<p>Discover trajectory directories under <code>root</code> using three-phase strategy:</p>
+<ol style="margin-left: 20px; margin-bottom: 16px;">
+  <li><strong>Marker scan</strong> &mdash; recursive walk for known markers (<code>results.json</code>, <code>steps.json</code>, etc.)</li>
+  <li><strong>Skill detection</strong> &mdash; validate candidates via SkillPool</li>
+  <li><strong>LLM analysis</strong> &mdash; when fast scan returns empty, use LLM to analyze directory structure</li>
+</ol>
+
+<h3>detect_or_generate_skill</h3>
+<p><span class="badge badge-func">function</span></p>
+<pre><code>detect_or_generate_skill(
+    run_dir: Path,
+    normalizer: Normalizer,
+    pool: SkillPool,
+    llm: LLMClient,
+    config: dict[str, Any],
+    user_skill_dir: Path | None = None,
+    format_override: str | None = None
+) &rarr; tuple[Skill | None, NormalizedTrajectory]</code></pre>
+<p>Unified detect-or-generate. Tries: pre-normalized &rarr; step-JSONL &rarr; skill detection &rarr; auto-generation.</p>
+
+<!-- SkillPool -->
+<h2 id="skill-pool">SkillPool</h2>
+<div class="module-path">codetracer.skills.pool</div>
+<p><span class="badge badge-class">class</span> Registry of all available trajectory parsers (seed + user-generated skills).</p>
+
+<h4>Constructor</h4>
+<pre><code>SkillPool(seed_dir: Path = &lt;built-in&gt;, user_dir: Path | None = None)</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li><span class="method-sig">detect(run_dir: Path) &rarr; str | None</span> <span class="method-desc">Return name of matching skill via two-pass detection.</span></li>
+  <li><span class="method-sig">get(name: str) &rarr; Skill | None</span> <span class="method-desc">Get skill by name.</span></li>
+  <li><span class="method-sig">register(skill: Skill) &rarr; None</span> <span class="method-desc">Register a new skill.</span></li>
+  <li><span class="method-sig">list_skills() &rarr; list[Skill]</span> <span class="method-desc">Get all registered skills.</span></li>
+  <li><span class="method-sig">skill_index() &rarr; str</span> <span class="method-desc">Compact markdown index for LLM context injection.</span></li>
+</ul>
+
+<!-- SkillGenerator -->
+<h2 id="skill-generator">SkillGenerator</h2>
+<div class="module-path">codetracer.skills.generator</div>
+<p><span class="badge badge-class">class</span> Uses LLM to analyze unknown trajectory formats and auto-generate parsers.</p>
+
+<h4>Constructor</h4>
+<pre><code>SkillGenerator(llm: LLMClient, pool: SkillPool, config: dict[str, Any])</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li>
+    <span class="method-sig">generate(run_dir: Path, user_dir: Path) &rarr; Skill</span>
+    <span class="method-desc">Analyze run_dir, generate SKILL.md + parser.py, register and return. Raises <code>RuntimeError</code> after max_attempts.</span>
+  </li>
+</ul>
+
+<!-- ======== QUERY ======== -->
+
+<h2 id="normalizer">Normalizer</h2>
+<div class="module-path">codetracer.query.normalizer</div>
+<p><span class="badge badge-class">class</span> Orchestrates format detection and parsing into <code>NormalizedTrajectory</code>.</p>
+
+<h4>Constructor</h4>
+<pre><code>Normalizer(pool: SkillPool)</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li><span class="method-sig">is_pre_normalized(run_dir: Path) &rarr; bool</span> <span class="method-desc">True if run_dir contains steps.json.</span></li>
+  <li><span class="method-sig">is_step_jsonl_dir(run_dir: Path) &rarr; bool</span> <span class="method-desc">True if run_dir contains step_N.jsonl files.</span></li>
+  <li><span class="method-sig">detect(run_dir: Path, format_override: str | None = None) &rarr; Skill</span> <span class="method-desc">Return matching skill or raise ValueError.</span></li>
+  <li><span class="method-sig">normalize_pre_normalized(run_dir, output_dir=None, quiet=False) &rarr; NormalizedTrajectory</span> <span class="method-desc">Load pre-normalized directory.</span></li>
+  <li><span class="method-sig">normalize_step_jsonl(run_dir, output_dir=None, quiet=False) &rarr; NormalizedTrajectory</span> <span class="method-desc">Load step_N.jsonl annotation files.</span></li>
+  <li><span class="method-sig">normalize(run_dir, skill, output_dir=None, quiet=False) &rarr; NormalizedTrajectory</span> <span class="method-desc">Parse using skill and write derived artifacts.</span></li>
+</ul>
+
+<!-- TreeBuilder -->
+<h2 id="tree-builder">TreeBuilder</h2>
+<div class="module-path">codetracer.query.tree_builder</div>
+<p><span class="badge badge-class">class</span> Converts normalized trajectories into tree.md navigation indices with step classification.</p>
+
+<h4>Constructor</h4>
+<pre><code>TreeBuilder(llm=None, config: dict[str, Any] | None = None)</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li><span class="method-sig">build(traj: NormalizedTrajectory) &rarr; str</span> <span class="method-desc">Build tree from step classification (fast, no LLM).</span></li>
+  <li><span class="method-sig">build_with_llm(traj: NormalizedTrajectory) &rarr; str</span> <span class="method-desc">Build tree using LLM for richer classification labels.</span></li>
+  <li><span class="method-sig">build_from_annotation(traj, annotation, run_dir=None) &rarr; str</span> <span class="method-desc">Build tree from per-step annotation labels.</span></li>
+</ul>
+
+<!-- ======== SERVICES ======== -->
+
+<h2 id="memory">Memory Service</h2>
+<div class="module-path">codetracer.services.memory</div>
+<p>Cross-trajectory memory with online mid-analysis extraction. Accumulates agent-specific failure patterns and investigation strategies.</p>
+
+<h3>OnlineMemoryExtractor</h3>
+<p><span class="badge badge-class">class</span> Fire-and-forget background extraction during analysis.</p>
+<pre><code>OnlineMemoryExtractor(
+    agent_type: str,
+    llm: Any,
+    memory_dir: Path | None = None,
+    step_interval: int = 8,
+    token_threshold: int = 30_000
+)</code></pre>
+<ul class="method-list">
+  <li><span class="method-sig">should_extract(step: int, total_tokens: int) &rarr; bool</span> <span class="method-desc">Check whether extraction should trigger.</span></li>
+  <li><span class="method-sig">extract_async(messages, step, total_tokens) &rarr; None</span> <span class="method-desc">Launch extraction in background thread.</span></li>
+</ul>
+
+<h3>Module Functions</h3>
+<ul class="method-list">
+  <li><span class="method-sig">load_memory(agent_type: str, memory_dir: Path | None = None) &rarr; str</span> <span class="method-desc">Load TRACER.md memory file. Returns contents or empty string.</span></li>
+  <li><span class="method-sig">update_memory(agent_type, analysis_summary, failure_patterns=None, memory_dir=None) &rarr; Path</span> <span class="method-desc">Append insights to TRACER.md with timestamp.</span></li>
+  <li><span class="method-sig">auto_extract_memory(agent_type, labels_path, analysis_summary="", memory_dir=None) &rarr; Path | None</span> <span class="method-desc">One-shot post-analysis memory extraction.</span></li>
+  <li><span class="method-sig">extract_failure_patterns(labels: list[dict]) &rarr; list[str]</span> <span class="method-desc">Extract short failure pattern strings from labels.</span></li>
+</ul>
+
+<!-- CostTracker -->
+<h2 id="cost-tracker">CostTracker</h2>
+<div class="module-path">codetracer.services.cost_tracker</div>
+<p><span class="badge badge-data">dataclass</span> Tracks LLM cost across pipeline phases and enforces budget limits.</p>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li><span class="method-sig">add_usage(model, input_tokens, output_tokens, phase="trace", duration_s=0.0) &rarr; float</span> <span class="method-desc">Record usage and return incremental USD cost.</span></li>
+  <li><span class="method-sig">is_over_budget() &rarr; bool</span> <span class="method-desc">Check if total cost &ge; budget limit.</span></li>
+  <li><span class="method-sig">should_warn() &rarr; bool</span> <span class="method-desc">Check if warning threshold reached (80%).</span></li>
+  <li><span class="method-sig">get_phase_costs() &rarr; dict[str, PhaseCost]</span> <span class="method-desc">Get per-phase cost breakdown.</span></li>
+  <li><span class="method-sig">format_summary() &rarr; str</span> <span class="method-desc">Human-readable cost summary.</span></li>
+</ul>
+
+<h4>Properties</h4>
+<ul class="method-list">
+  <li><span class="method-sig">total_cost: float</span></li>
+  <li><span class="method-sig">budget_remaining: float</span></li>
+  <li><span class="method-sig">budget_used_pct: float</span></li>
+</ul>
+
+<h3>ModelCosts</h3>
+<p><span class="badge badge-data">dataclass</span> Per-million-token pricing.</p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Default</th></tr>
+  <tr><td>input_per_mtok</td><td>float</td><td>3.0</td></tr>
+  <tr><td>output_per_mtok</td><td>float</td><td>15.0</td></tr>
+</table>
+
+<!-- LLMClient -->
+<h2 id="llm-client">LLMClient</h2>
+<div class="module-path">codetracer.llm.client</div>
+<p><span class="badge badge-class">class</span> OpenAI-compatible LLM client with categorized retry logic and Azure AD support.</p>
+
+<h4>Constructor</h4>
+<pre><code>LLMClient(
+    api_base: str = "",
+    api_key: str = "",
+    model_name: str | None = None,
+    model_kwargs: dict = {},
+    azure_ad_resource: str = ""
+)</code></pre>
+
+<h4>Methods</h4>
+<ul class="method-list">
+  <li>
+    <span class="method-sig">query(messages: list[dict], **kwargs) &rarr; dict[str, Any]</span>
+    <span class="method-desc">Query LLM with retry. Returns <code>{"content": str, "usage": {...}}</code>.</span>
+  </li>
+</ul>
+
+<h4>Properties</h4>
+<ul class="method-list">
+  <li><span class="method-sig">model_name: str | None</span></li>
+  <li><span class="method-sig">cost: float</span> <span class="method-desc">Accumulated cost (deprecated, use CostTracker).</span></li>
+  <li><span class="method-sig">n_calls: int</span></li>
+  <li><span class="method-sig">total_prompt_tokens: int</span></li>
+  <li><span class="method-sig">total_completion_tokens: int</span></li>
+</ul>
+
+<!-- ======== MODELS ======== -->
+
+<h2 id="models">Data Models</h2>
+<div class="module-path">codetracer.models</div>
+
+<h3>NormalizedTrajectory</h3>
+<p><span class="badge badge-data">dataclass</span> Fully normalized trajectory ready for tree building and tracing.</p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td>steps</td><td>list[StepRecord]</td><td>List of steps</td></tr>
+  <tr><td>task_description</td><td>str</td><td>Task description</td></tr>
+  <tr><td>metadata</td><td>dict</td><td>Format/run metadata</td></tr>
+</table>
+<ul class="method-list">
+  <li><span class="method-sig">write_steps_json(path: Path) &rarr; None</span></li>
+  <li><span class="method-sig">step_count: int</span> <span class="method-desc">(property)</span></li>
+</ul>
+
+<h3>StepRecord</h3>
+<p><span class="badge badge-data">dataclass</span> One normalized step: an action and its observation.</p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td>step_id</td><td>int</td><td>Step index</td></tr>
+  <tr><td>action</td><td>str</td><td>Action taken</td></tr>
+  <tr><td>observation</td><td>str | None</td><td>Observation result</td></tr>
+  <tr><td>thinking</td><td>str | None</td><td>Internal reasoning</td></tr>
+  <tr><td>tool_type</td><td>str | None</td><td>Type of tool used</td></tr>
+  <tr><td>action_ref</td><td>FileRef | None</td><td>Source location reference</td></tr>
+  <tr><td>observation_ref</td><td>FileRef | None</td><td>Source location reference</td></tr>
+</table>
+
+<h3>ErrorAnalysis</h3>
+<p><span class="badge badge-data">dataclass</span> Result of trajectory error analysis.</p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td>traj_id</td><td>str</td><td>Trajectory identifier</td></tr>
+  <tr><td>labels</td><td>list[StepLabel]</td><td>Per-step labels</td></tr>
+  <tr><td>summary</td><td>str</td><td>Analysis summary</td></tr>
+  <tr><td>metadata</td><td>dict</td><td>Additional metadata</td></tr>
+</table>
+<ul class="method-list">
+  <li><span class="method-sig">save(path: Path) &rarr; None</span></li>
+  <li><span class="method-sig">load(path: Path) &rarr; ErrorAnalysis</span> <span class="method-desc">(classmethod)</span></li>
+  <li><span class="method-sig">from_labels_json(path: Path, traj_id: str) &rarr; ErrorAnalysis</span> <span class="method-desc">(classmethod)</span></li>
+  <li><span class="method-sig">first_incorrect_step_id: int | None</span> <span class="method-desc">(property)</span></li>
+</ul>
+
+<h3>StepLabel</h3>
+<p><span class="badge badge-data">dataclass</span> Label for a single diagnosed step.</p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td>step_id</td><td>int</td><td>Target step</td></tr>
+  <tr><td>verdict</td><td>StepVerdict</td><td>INCORRECT | UNUSEFUL | CORRECT</td></tr>
+  <tr><td>reasoning</td><td>str</td><td>Why this verdict</td></tr>
+  <tr><td>deviation_type</td><td>str</td><td>Type of deviation</td></tr>
+  <tr><td>correct_alternative</td><td>str</td><td>What should have happened</td></tr>
+</table>
+
+<h3>StepVerdict</h3>
+<p><span class="badge badge-enum">enum</span> <code>INCORRECT = "incorrect"</code> | <code>UNUSEFUL = "unuseful"</code> | <code>CORRECT = "correct"</code></p>
+
+<h3>ReplayResult</h3>
+<p><span class="badge badge-data">dataclass</span> Outcome of replay session.</p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td>status</td><td>ReplayStatus</td><td>SUCCESS | PARTIAL | FAILED</td></tr>
+  <tr><td>checkpoint</td><td>StepCheckpoint | None</td><td>Final checkpoint</td></tr>
+  <tr><td>steps_replayed</td><td>int</td><td>Count of steps replayed</td></tr>
+  <tr><td>agent_output</td><td>str</td><td>Agent's response</td></tr>
+</table>
+
+<h3>TaskContext</h3>
+<p><span class="badge badge-data">dataclass</span> Task metadata and provider reference.</p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td>bench_type</td><td>str</td><td>Benchmark type</td></tr>
+  <tr><td>task_name</td><td>str</td><td>Task name</td></tr>
+  <tr><td>task_dir</td><td>Path</td><td>Task directory</td></tr>
+  <tr><td>problem_statement</td><td>str | None</td><td>Problem description</td></tr>
+</table>
+<ul class="method-list">
+  <li><span class="method-sig">load(task_dir: Path, pool=None) &rarr; TaskContext</span> <span class="method-desc">(classmethod) Auto-detect and create context.</span></li>
+  <li><span class="method-sig">prepare_sandbox(target_parent: Path) &rarr; Path</span></li>
+  <li><span class="method-sig">exploration_instructions(sandbox: Path) &rarr; str</span></li>
+</ul>
+
+<!-- Output Profiles -->
+<h2 id="output-profiles">Output Profiles</h2>
+<div class="module-path">codetracer.state.output_profile</div>
+
+<h3>OutputProfile</h3>
+<p><span class="badge badge-data">dataclass</span></p>
+<table class="field-table">
+  <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+  <tr><td>name</td><td>str</td><td>Profile name</td></tr>
+  <tr><td>schema_ref</td><td>str</td><td>Schema reference</td></tr>
+  <tr><td>finalize_instruction</td><td>str</td><td>Agent output format instructions</td></tr>
+  <tr><td>output_file</td><td>str</td><td>Output filename</td></tr>
+</table>
+
+<h3>Built-in Profiles</h3>
+<div class="section-card">
+  <p><strong>tracebench</strong> &rarr; <code>codetracer_labels.json</code><br>Stage-level labels with incorrect_step_ids and unuseful_step_ids for benchmark evaluation.</p>
+</div>
+<div class="section-card">
+  <p><strong>detailed</strong> &rarr; <code>codetracer_analysis.json</code><br>Root cause chains, critical decision points, and comprehensive analysis.</p>
+</div>
+<div class="section-card">
+  <p><strong>rl_feedback</strong> &rarr; <code>codetracer_rl_feedback.json</code><br>Per-step deviation analysis and reward signals for RL training.</p>
+</div>
+
+<h3>Functions</h3>
+<ul class="method-list">
+  <li><span class="method-sig">load_profile(name: str, config=None) &rarr; OutputProfile</span> <span class="method-desc">Load by name. Raises ValueError if unknown.</span></li>
+  <li><span class="method-sig">get_default_profile_name(config=None) &rarr; str</span> <span class="method-desc">Returns default profile name ("detailed").</span></li>
+</ul>
+
+<!-- ======== INTEGRATION ======== -->
+
+<h2 id="plugin-adapter">Plugin Adapters</h2>
+<div class="module-path">codetracer.plugins.adapter</div>
+<p>Integration surface for embedding CodeTracer into external agent frameworks.</p>
+
+<h3>PluginAdapter</h3>
+<p><span class="badge badge-abc">abstract</span> Base class for framework integration.</p>
+<ul class="method-list">
+  <li><span class="method-sig">name() &rarr; str</span> <span class="method-desc">Unique identifier (e.g. 'openhands').</span></li>
+  <li><span class="method-sig">ingest_trajectory(raw_path, **kwargs) &rarr; NormalizedTrajectory</span></li>
+  <li><span class="method-sig">analyze(traj, **kwargs) &rarr; ErrorAnalysis</span></li>
+  <li><span class="method-sig">replay(traj, step_id, analysis, **kwargs) &rarr; ReplayResult</span></li>
+  <li><span class="method-sig">analyze_and_replay(raw_path, **kwargs) &rarr; ReplayResult</span> <span class="method-desc">Convenience: ingest &rarr; analyze &rarr; auto-replay.</span></li>
+</ul>
+
+<h3>GenericPluginAdapter</h3>
+<p><span class="badge badge-class">class</span> Full pipeline adapter backed by CodeTracer components.</p>
+<pre><code>GenericPluginAdapter(
+    skill_name: str,
+    *,
+    bench_name: str | None = None,
+    config: dict | None = None,
+    llm_kwargs: dict | None = None
+)</code></pre>
+
+<h3>Built-in Adapters</h3>
+<table class="field-table">
+  <tr><th>Adapter</th><th>Skill Name</th><th>Framework</th></tr>
+  <tr><td>MinisweAdapter</td><td>miniswe</td><td>MiniSWE Agent</td></tr>
+  <tr><td>OpenHandsAdapter</td><td>openhands</td><td>OpenHands</td></tr>
+  <tr><td>SweAgentAdapter</td><td>swe_agent</td><td>SWE-Agent</td></tr>
+</table>
+
+<!-- CLI -->
+<h2 id="cli">CLI Reference</h2>
+<div class="module-path">codetracer.cli.commands</div>
+<pre><code>Usage: codetracer [COMMAND] [OPTIONS]
+
+Commands:
+  analyze     Run trajectory diagnosis on a run directory
+  run         Full pipeline: detect &rarr; normalize &rarr; tree &rarr; analyze &rarr; replay
+  replay      Resume trajectory from diagnosed breakpoint
+  inspect     Inspect specific step or range
+  interactive Enter interactive REPL with menu-driven actions
+  normalize   Normalize a trajectory to steps.json format
+  tree        Build step classification tree
+  batch       Run batch analysis from manifest
+
+Global Options:
+  --model TEXT       LLM model name
+  --api-base URL     API endpoint
+  --api-key TEXT     API key
+  --config PATH      Custom configuration file
+  --profile TEXT     Output profile (tracebench / detailed / rl_feedback)
+  --cost-limit $     Max LLM spend per trajectory (default: 3.0)
+  --dry-run          Normalize + tree only, skip LLM analysis</code></pre>
+
+<!-- Footer -->
+<div style="margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px;">
+  <p>CodeTracer &copy; 2026 <a href="https://cs.nju.edu.cn">Nanjing University</a> &bull; <a href="https://arxiv.org/abs/2604.11641">Paper</a> &bull; <a href="https://github.com/NJU-LINK/CodeTracer">GitHub</a> &bull; MIT License</p>
+</div>
+
+</main>
+</div>
+
+<script>
+// Smooth scroll + active nav
+document.querySelectorAll('.sidebar .nav-link[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('[id]');
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  document.querySelectorAll('.sidebar .nav-link').forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
