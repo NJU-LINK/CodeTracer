@@ -19,15 +19,12 @@
   <a href="https://huggingface.co/datasets/NJU-LINK/CodeTraceBench"><img src="https://img.shields.io/badge/🤗-CodeTraceBench-yellow.svg?style=for-the-badge" alt="Dataset"></a>
 </p>
 <p align="center">
-  <a href="https://pypi.org/project/codetracer/"><img src="https://img.shields.io/pypi/v/codetracer.svg?style=flat-square&logo=pypi&logoColor=white" alt="PyPI"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat-square" alt="License"></a>
-  <a href="https://github.com/NJU-LINK/CodeTracer/actions"><img src="https://img.shields.io/github/actions/workflow/status/NJU-LINK/CodeTracer/ci.yml?branch=main&style=flat-square&logo=github" alt="CI"></a>
 </p>
 
 <p align="center">
   <a href="#quick-start">Quick Start</a> &bull;
-  <a href="#how-it-works">How It Works</a> &bull;
   <a href="#codetrace-bench">CodeTraceBench</a> &bull;
   <a href="#supported-agents">Supported Agents</a> &bull;
   <a href="#configuration">Configuration</a> &bull;
@@ -71,39 +68,6 @@ Resume failed trajectories from diagnosed breakpoints with corrective strategies
 </td>
 </tr>
 </table>
-
----
-
-## How It Works
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        CodeTracer Pipeline                              │
-│                                                                         │
-│   ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌───────────────┐  │
-│   │ Discovery  │───▶│ Normalize │───▶│   Tree    │───▶│   Diagnosis   │  │
-│   │           │    │           │    │  Builder  │    │    Agent      │  │
-│   │ Deep scan │    │ Unify all │    │ Classify  │    │ Inspect steps │  │
-│   │ + auto-   │    │ formats → │    │ steps →   │    │ + label       │  │
-│   │ detect    │    │ steps.json│    │ tree.md   │    │ errors        │  │
-│   └───────────┘    └───────────┘    └───────────┘    └──────┬────────┘  │
-│                                                             │           │
-│                              ┌───────────────┐              │           │
-│                        ┌─────│    Memory      │◀─────────────┘           │
-│                        │     │  Cross-traj    │                         │
-│                        │     │  experience    │                         │
-│                        │     └───────────────┘                         │
-│                        ▼                                                │
-│   ┌───────────────┐    ┌───────────────┐    ┌───────────────────────┐   │
-│   │  Structured   │    │    Replay     │    │    Output Profiles    │   │
-│   │  Error Labels │    │    Engine     │    │                       │   │
-│   │               │    │              │    │ • tracebench (eval)   │   │
-│   │ incorrect /   │    │ Resume from  │    │ • detailed (root     │   │
-│   │ unuseful      │    │ breakpoint   │    │   cause analysis)    │   │
-│   │ per step      │    │ + fix        │    │ • rl_feedback (RL)   │   │
-│   └───────────────┘    └───────────────┘    └───────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
@@ -392,5 +356,10 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 ---
 
 <p align="center">
-  <sub>Built with care at <a href="https://cs.nju.edu.cn">Nanjing University</a></sub>
+  <a href="https://www.nju.edu.cn"><img src="assets/nju_logo.png" height="64" alt="Nanjing University"></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://huggingface.co/Kwaipilot"><img src="assets/kwaipilot_logo.png" height="64" alt="Kwaipilot"></a>
+</p>
+<p align="center">
+  <sub>Built at <a href="https://www.nju.edu.cn">Nanjing University</a> &amp; <a href="https://huggingface.co/Kwaipilot">Kwaipilot</a></sub>
 </p>
